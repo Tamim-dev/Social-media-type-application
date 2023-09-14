@@ -1,0 +1,22 @@
+.registrationbox{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    margin-top: 80px;
+}
+
+.registrationTextfieldbox{
+    width: 330px;
+    margin: 0 auto;
+}
+
+.registrationTextfield{
+    width: 100% ;
+    margin: 10px 0px !important; 
+}
+.registrationButton{
+    width: 100% ;
+    margin: 10px 0px !important; 
+    border-radius: 50px !important;
+    padding: 15px 0 !important;
+}
