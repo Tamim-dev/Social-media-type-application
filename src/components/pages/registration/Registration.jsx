@@ -5,51 +5,74 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import { Link } from "react-router-dom";
-
+import { getDatabase, push, ref, set } from "firebase/database";
+import { useNavigate } from "react-router-dom";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 let initialvalue = {
     email: "",
     fullname: "",
     password: "",
-    error:"",
+    error: "",
 };
 
 const Registration = () => {
+    const auth = getAuth();
+    const db = getDatabase();
+    const navigate = useNavigate();
     let [values, setValues] = useState(initialvalue);
 
     let handelChange = (e) => {
         setValues({
             ...values,
             [e.target.name]: e.target.value,
-            error:""
+            error: "",
         });
     };
 
-    let handelregistration =()=>{
-       let {email,fullname,password} = values
+    let handelregistration = () => {
+        let { email, fullname, password } = values;
 
-        if(!email){
+        if (!email) {
             setValues({
                 ...values,
-                error:"enteryouremail"
+                error: "enteryouremail",
             });
             return;
         }
-        if(!fullname){
+        if (!fullname) {
             setValues({
                 ...values,
-                error:"enteryourfullname"
+                error: "enteryourfullname",
             });
             return;
         }
-        if(!password){
+        if (!password) {
             setValues({
                 ...values,
-                error:"enteryourpassword"
+                error: "enteryourpassword",
             });
             return;
         }
-    }
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((user) => {
+                set(ref(db, "users/" + user.user.uid), {
+                    email: values.email,
+                    username: values.fullname,
+                    profile_picture:
+                        "https://i.ibb.co/Sx0KcjN/User-Profile-PNG-Image.png",
+                    cover_picture: "https://i.ibb.co/G93NXJ1/Rectangle-3.png",
+                })
+                navigate("/login")
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(error);
+            });
+        
+    };
+
     return (
         <div className="registrationbox">
             <div>
@@ -73,7 +96,9 @@ const Registration = () => {
                         name="email"
                         onChange={handelChange}
                     />
-                    {values.error.includes("enteryouremail")&&<Alert severity="error">Please enter your Email</Alert>}
+                    {values.error.includes("enteryouremail") && (
+                        <Alert severity="error">Please enter your Email</Alert>
+                    )}
                     <TextField
                         className="registrationTextfield"
                         id="outlined-basic"
@@ -82,7 +107,11 @@ const Registration = () => {
                         name="fullname"
                         onChange={handelChange}
                     />
-                    {values.error.includes("enteryourfullname")&&<Alert severity="error">Please enter your Fullname</Alert>}
+                    {values.error.includes("enteryourfullname") && (
+                        <Alert severity="error">
+                            Please enter your Fullname
+                        </Alert>
+                    )}
                     <TextField
                         className="registrationTextfield"
                         id="outlined-basic"
@@ -92,7 +121,11 @@ const Registration = () => {
                         name="password"
                         onChange={handelChange}
                     />
-                    {values.error.includes("enteryourpassword")&&<Alert severity="error">Please enter your Password</Alert>}
+                    {values.error.includes("enteryourpassword") && (
+                        <Alert severity="error">
+                            Please enter your Password
+                        </Alert>
+                    )}
                     <Button
                         className="registrationButton"
                         variant="contained"
