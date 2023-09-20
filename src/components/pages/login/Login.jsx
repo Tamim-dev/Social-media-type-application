@@ -1,11 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { BsLinkedin } from "react-icons/bs";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import { Link } from "react-router-dom";
 
+let initialvalue = {
+    email: "",
+    password: "",
+    error: "",
+};
+
 const Login = () => {
+    let [values,setValues] = useState(initialvalue)
+
+    let handelchange = (e) => {
+        setValues({
+            ...values,
+            [e.target.name]: e.target.value,
+            error: "",
+        });
+    };
+
+    let handellogin=()=>{
+
+    }
     return (
         <div className="registrationbox">
             <div>
@@ -26,15 +45,19 @@ const Login = () => {
                         id="outlined-basic"
                         label="Email"
                         variant="outlined"
+                        name="email"
+                        onChange={handelchange}
                     />
                     <TextField
                         className="registrationTextfield"
                         id="outlined-basic"
                         label="Password"
                         variant="outlined"
+                        name="password"
+                        onChange={handelchange}
                     />
-                    <Button className="registrationButton" variant="contained">
-                        Contained
+                    <Button className="registrationButton" variant="contained" onClick={handellogin}>
+                        Login
                     </Button>
                 </div>
                 <Alert severity="info">
