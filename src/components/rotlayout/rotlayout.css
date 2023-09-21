@@ -1,0 +1,10 @@
+.rotlayout_header{
+    padding: 10px 30px;
+}
+
+.rotlayout_icon{
+    font-size: 35px;
+    color: #0077B5;
+    display: flex;
+    align-items: center;
+}

@@ -7,7 +7,11 @@ import Alert from "@mui/material/Alert";
 import { Link } from "react-router-dom";
 import { getDatabase, push, ref, set } from "firebase/database";
 import { useNavigate } from "react-router-dom";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    updateProfile,
+} from "firebase/auth";
 
 let initialvalue = {
     email: "",
@@ -54,23 +58,30 @@ const Registration = () => {
             });
             return;
         }
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((user) => {
-                set(ref(db, "users/" + user.user.uid), {
-                    email: values.email,
-                    username: values.fullname,
-                    profile_picture:
-                        "https://i.ibb.co/Sx0KcjN/User-Profile-PNG-Image.png",
-                    cover_picture: "https://i.ibb.co/G93NXJ1/Rectangle-3.png",
-                })
-                navigate("/login")
+        createUserWithEmailAndPassword(auth, email, password).then((user) => {
+            console.log(user);
+            updateProfile(auth.currentUser, {
+                displayName: values.fullname,
+                photoURL: "https://i.ibb.co/Sx0KcjN/User-Profile-PNG-Image.png",
             })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(error);
-            });
-        
+                .then(() => {
+                    set(ref(db, "users/" + user.user.uid), {
+                        email: values.email,
+                        username: values.fullname,
+                        photoURL:
+                            "https://i.ibb.co/Sx0KcjN/User-Profile-PNG-Image.png",
+                        cover_picture:
+                            "https://i.ibb.co/G93NXJ1/Rectangle-3.png",
+                    });
+
+                    navigate("/login");
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.log(error);
+                });
+        });
     };
 
     return (

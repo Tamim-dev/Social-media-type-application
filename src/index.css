@@ -4,3 +4,8 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+.container{
+    max-width: 1360px;
+    margin: 0 auto;
+}

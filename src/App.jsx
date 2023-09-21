@@ -7,9 +7,9 @@ import {
 } from "react-router-dom";
 import Registration from "./components/pages/registration/Registration";
 import Login from "./components/pages/login/Login";
-import Rotlayout from "./components/Rotlayout";
+import Rotlayout from "./components/rotlayout/Rotlayout";
 import Feed from "./components/pages/Feed";
-import Profile from "./components/pages/Profile";
+import Profile from "./components/pages/profile/Profile";
 
 const router = createBrowserRouter(
     createRoutesFromElements(

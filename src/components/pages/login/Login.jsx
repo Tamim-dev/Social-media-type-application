@@ -4,6 +4,10 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import { Link } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { userdata } from "../../features/users/userSlice";
+import { useDispatch } from "react-redux";
 
 let initialvalue = {
     email: "",
@@ -12,7 +16,10 @@ let initialvalue = {
 };
 
 const Login = () => {
-    let [values,setValues] = useState(initialvalue)
+    const auth = getAuth();
+    let navigate = useNavigate()
+    let dispatch = useDispatch()
+    let [values, setValues] = useState(initialvalue);
 
     let handelchange = (e) => {
         setValues({
@@ -22,9 +29,33 @@ const Login = () => {
         });
     };
 
-    let handellogin=()=>{
-
-    }
+    let handellogin = () => {
+        let { email, password } = values;
+        if (!email) {
+            setValues({
+                ...values,
+                error: "enteryouremail",
+            });
+            return;
+        }
+        if (!password) {
+            setValues({
+                ...values,
+                error: "enteryourpassword",
+            });
+            return;
+        }
+        signInWithEmailAndPassword(auth, email, password)
+            .then((user) => {
+                dispatch(userdata(user.user))
+                localStorage.setItem("user", JSON.stringify(user.user))
+                navigate("/social/profile")
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
+    };
     return (
         <div className="registrationbox">
             <div>
@@ -48,6 +79,9 @@ const Login = () => {
                         name="email"
                         onChange={handelchange}
                     />
+                    {values.error.includes("enteryouremail") && (
+                        <Alert severity="error">Please enter your Email</Alert>
+                    )}
                     <TextField
                         className="registrationTextfield"
                         id="outlined-basic"
@@ -56,7 +90,14 @@ const Login = () => {
                         name="password"
                         onChange={handelchange}
                     />
-                    <Button className="registrationButton" variant="contained" onClick={handellogin}>
+                    {values.error.includes("enteryourpassword") && (
+                        <Alert severity="error">Please enter your Email</Alert>
+                    )}
+                    <Button
+                        className="registrationButton"
+                        variant="contained"
+                        onClick={handellogin}
+                    >
                         Login
                     </Button>
                 </div>
@@ -67,7 +108,7 @@ const Login = () => {
                         to="/"
                     >
                         {" "}
-                        Sign UP
+                        Sign up
                     </Link>
                 </Alert>
             </div>
