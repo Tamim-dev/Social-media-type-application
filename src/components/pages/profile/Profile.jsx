@@ -8,6 +8,8 @@ import Image from "../../Image";
 import profile from "../../../assets/profile.jpeg";
 import cover from "../../../assets/cover.png";
 import { getDatabase, ref, onValue } from "firebase/database";
+import{FaLocationArrow} from "react-icons/fa"
+import Button from '@mui/material/Button';
 
 const Profile = () => {
     // const db = getDatabase();
@@ -27,17 +29,31 @@ const Profile = () => {
             <Container>
                 <Grid container>
                     <Grid xs={9}>
-                        <div className="profile_part_cover">
-                            <Image
-                                className="profile_part_cover_img"
-                                imgsrc={cover}
-                            />
+                        <div className="profile_img_box">
+                            <div className="profile_part_cover">
+                                <Image
+                                    className="profile_part_cover_img"
+                                    imgsrc={cover}
+                                />
+                            </div>
+                            <div className="profile_part_profile">
+                                <Image
+                                    className="profile_part_profile_img"
+                                    imgsrc={profile}
+                                />
+                            </div>
                         </div>
-                        <div className="profile_part_profile">
-                            <Image
-                                className="profile_part_profile_img"
-                                imgsrc={profile}
-                            />
+                        <div className="profile_details_box">
+                            <div style={{display:"flex",justifyContent:"space-between"}}>
+                                <h3 style={{fontSize:"18px",fontWeight:"700"}}>Dmitry Kargaev</h3>
+                                <p><FaLocationArrow style={{color:"#0275B1",fontSize:"14px",marginRight:"10px"}}/>Saint Petersburg, Russian Federation</p>
+                            </div>
+                            <p style={{marginTop:"10px",marginBottom:"15px"}}>
+                                Freelance UX/UI designer, 80+ projects in web
+                                design, mobile apps (iOS & android) and creative
+                                projects. Open to offers.
+                            </p>
+                            <Button className="button_color" variant="contained">Contact info</Button>
                         </div>
                     </Grid>
                     <Grid xs={3}>fdgfd</Grid>
