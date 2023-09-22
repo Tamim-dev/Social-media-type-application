@@ -10,6 +10,10 @@ import Login from "./components/pages/login/Login";
 import Rotlayout from "./components/rotlayout/Rotlayout";
 import Feed from "./components/pages/Feed";
 import Profile from "./components/pages/profile/Profile";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Friends from "./components/Friends";
+import Post from "./components/Post";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -17,7 +21,10 @@ const router = createBrowserRouter(
             <Route path="/" element={<Registration />}></Route>
             <Route path="/login" element={<Login />}></Route>
             <Route path="/social" element={<Rotlayout />}>
-                <Route path="profile" element={<Profile />}></Route>
+                <Route path="profile" element={<Profile />}>
+                    <Route path="friend" element={<Friends />}></Route>
+                    <Route path="post" element={<Post />}></Route>
+                </Route>
                 <Route path="feed" element={<Feed />}></Route>
             </Route>
         </Route>
@@ -25,7 +32,24 @@ const router = createBrowserRouter(
 );
 
 const App = () => {
-    return <RouterProvider router={router} />;
+    return (
+        <>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
+            <ToastContainer />
+            <RouterProvider router={router} />
+        </>
+    );
 };
 
 export default App;

@@ -12,6 +12,7 @@ import {
     createUserWithEmailAndPassword,
     updateProfile,
 } from "firebase/auth";
+import { toast } from "react-toastify";
 
 let initialvalue = {
     email: "",
@@ -24,6 +25,7 @@ const Registration = () => {
     const auth = getAuth();
     const db = getDatabase();
     const navigate = useNavigate();
+    const notify = (mes) => toast.error(mes);
     let [values, setValues] = useState(initialvalue);
 
     let handelChange = (e) => {
@@ -58,13 +60,13 @@ const Registration = () => {
             });
             return;
         }
-        createUserWithEmailAndPassword(auth, email, password).then((user) => {
-            console.log(user);
-            updateProfile(auth.currentUser, {
-                displayName: values.fullname,
-                photoURL: "https://i.ibb.co/Sx0KcjN/User-Profile-PNG-Image.png",
-            })
-                .then(() => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((user) => {
+                updateProfile(auth.currentUser, {
+                    displayName: values.fullname,
+                    photoURL:
+                        "https://i.ibb.co/Sx0KcjN/User-Profile-PNG-Image.png",
+                }).then(() => {
                     set(ref(db, "users/" + user.user.uid), {
                         email: values.email,
                         username: values.fullname,
@@ -73,15 +75,30 @@ const Registration = () => {
                         cover_picture:
                             "https://i.ibb.co/G93NXJ1/Rectangle-3.png",
                     });
-
                     navigate("/login");
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    console.log(error);
                 });
-        });
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                if (errorCode.includes("auth/invalid-email")) {
+                    notify("Invalid your email")
+                    setValues({
+                        ...values,
+                        email: "",
+                        fullname: "",
+                        password: "",
+                    });
+                }
+                if (errorCode.includes("auth/email-already-in-use")) {
+                    notify("Already in use your email")
+                    setValues({
+                        ...values,
+                        email: "",
+                        fullname: "",
+                        password: "",
+                    });
+                }
+            });
     };
 
     return (
@@ -105,6 +122,7 @@ const Registration = () => {
                         label="Email"
                         variant="outlined"
                         name="email"
+                        value={values.email}
                         onChange={handelChange}
                     />
                     {values.error.includes("enteryouremail") && (
@@ -116,6 +134,7 @@ const Registration = () => {
                         label="Fullname"
                         variant="outlined"
                         name="fullname"
+                        value={values.fullname}
                         onChange={handelChange}
                     />
                     {values.error.includes("enteryourfullname") && (
@@ -130,6 +149,7 @@ const Registration = () => {
                         variant="outlined"
                         type="password"
                         name="password"
+                        value={values.password}
                         onChange={handelChange}
                     />
                     {values.error.includes("enteryourpassword") && (

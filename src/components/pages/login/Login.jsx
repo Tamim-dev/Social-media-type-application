@@ -8,6 +8,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { userdata } from "../../features/users/userSlice";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 let initialvalue = {
     email: "",
@@ -19,7 +20,10 @@ const Login = () => {
     const auth = getAuth();
     let navigate = useNavigate()
     let dispatch = useDispatch()
+    const notify = (mes) => toast.error(mes);
+    const notifys = (mes) => toast.success(mes);
     let [values, setValues] = useState(initialvalue);
+
 
     let handelchange = (e) => {
         setValues({
@@ -49,11 +53,29 @@ const Login = () => {
             .then((user) => {
                 dispatch(userdata(user.user))
                 localStorage.setItem("user", JSON.stringify(user.user))
+                notifys("Login Successful")
                 navigate("/social/profile")
             })
             .catch((error) => {
                 const errorCode = error.code;
-                const errorMessage = error.message;
+                if (errorCode.includes("auth/invalid-email")) {
+                    notify("Invalid your email")
+                    setValues({
+                        ...values,
+                        email: "",
+                        fullname: "",
+                        password: "",
+                    });
+                }
+                if (errorCode.includes("auth/invalid-login-credentials")) {
+                    notify("Invalid login credentials")
+                    setValues({
+                        ...values,
+                        email: "",
+                        fullname: "",
+                        password: "",
+                    });
+                }
             });
     };
     return (
@@ -77,6 +99,7 @@ const Login = () => {
                         label="Email"
                         variant="outlined"
                         name="email"
+                        value={values.email}
                         onChange={handelchange}
                     />
                     {values.error.includes("enteryouremail") && (
@@ -88,6 +111,7 @@ const Login = () => {
                         label="Password"
                         variant="outlined"
                         name="password"
+                        value={values.password}
                         onChange={handelchange}
                     />
                     {values.error.includes("enteryourpassword") && (
