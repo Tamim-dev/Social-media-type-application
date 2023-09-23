@@ -38,17 +38,17 @@
     object-fit: cover;
 }
 
-.profile_details_box{
+.profile_details_box {
     background: #ffffff;
     padding: 25px 46px 80px 225px;
 }
 
-.button_color{
-    background: #0077B5 !important;
+.button_color {
+    background: #0077b5 !important;
     padding: 10px 45px !important;
 }
 
-.sidebar_profile{
+.sidebar_profile {
     width: 100%;
     height: 545px;
     padding: 25px 20px;
@@ -57,56 +57,67 @@
     overflow-y: scroll;
 }
 
-.profile_button{
+.profile_button {
     padding: 12px 90px;
-    border: 1px solid #E7E7E7;
+    border: 1px solid #e7e7e7;
     background: #ffffff;
 }
 
-.profile_button_active{
+.profile_button_active {
     padding: 20px 90px 12px 90px;
-    border: 1px solid #E7E7E7;
-    background: #0077B5;
+    border: 1px solid #e7e7e7;
+    background: #0077b5;
     color: #ffffff;
 }
 
-.sidebar_profile_heading{
+.sidebar_profile_heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: #0275B1;
+    color: #0275b1;
     text-transform: uppercase;
     border-bottom: 2px solid #dddddd;
     padding-bottom: 18px;
 }
 
-.sidebar_profile_img{
+.sidebar_profile_img {
     width: 62px;
     height: 62px;
     object-fit: cover;
     border-radius: 50%;
 }
 
-.sidebar_profile_box{
+.sidebar_profile_box {
     display: flex;
     column-gap: 15px;
     margin-top: 20px;
     align-items: center;
 }
 
-.about_box{
+.about_box {
     margin-top: 30px;
     padding: 30px;
     background: #ffffff;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.2);
 }
 
-.experience_img{
+.experience_img {
     width: 62px;
     height: 62px;
     object-fit: cover;
     border-radius: 50%;
 }
 
-.experience_box:last-child{
-    border-bottom: none;
+.experience_box {
+    display: flex;
+    column-gap: 20px;
+    margin-top: 20px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid #dddddd;
+}
+
+.experience_box:last-child {
+    border-bottom: 0px solid ;
 }

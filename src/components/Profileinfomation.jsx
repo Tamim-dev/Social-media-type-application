@@ -72,15 +72,7 @@ const Profileinfomation = () => {
                         Add experience
                     </p>
                 </div>
-                <div
-                    style={{
-                        display: "flex",
-                        columnGap: "20px",
-                        marginTop: "20px",
-                        paddingBottom:"25px",
-                        borderBottom:"2px solid #dddddd"
-                    }}
-                >
+                <div className="experience_box">
                     <Image className="experience_img" imgsrc={p1} />
                     <div>
                         <h4 style={{ marginBottom: "10px" }}>
@@ -104,20 +96,10 @@ const Profileinfomation = () => {
                         </p>
                     </div>
                 </div>
-                <div
-                    style={{
-                        display: "flex",
-                        columnGap: "20px",
-                        marginTop: "20px",
-                        paddingBottom:"25px",
-                        borderBottom:"2px solid #dddddd"
-                    }}
-                >
+                <div className="experience_box">
                     <Image className="experience_img" imgsrc={p2} />
                     <div>
-                        <h4 style={{ marginBottom: "10px" }}>
-                        UX/UI designer
-                        </h4>
+                        <h4 style={{ marginBottom: "10px" }}>UX/UI designer</h4>
                         <p>Upwork</p>
                         <p
                             style={{
@@ -126,68 +108,67 @@ const Profileinfomation = () => {
                                 marginBottom: "10px",
                             }}
                         >
-                        Jun 2019 — Present
+                            Jun 2019 — Present
                         </p>
                         <p>
-                        New experience with Upwork system. Work in next areas: UX/UI design, graphic design, interaction design, UX research.
+                            New experience with Upwork system. Work in next
+                            areas: UX/UI design, graphic design, interaction
+                            design, UX research.
                         </p>
                     </div>
                 </div>
             </div>
-            <div
-                className="about_box"
-            >
-                <div style={{display:"flex",justifyContent:"space-between"}}>
-                <h3
-                    style={{
-                        fontSize: "18px",
-                        fontWeight: "700",
-                        display: "inline-block",
-                    }}
+            <div className="about_box">
+                <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                    Education
-                </h3>
-                <p
-                    style={{
-                        display: "inline-block",
-                        textAlign: "end",
-                        color: "#0275B1",
-                        cursor: "pointer",
-                    }}
-                >
-                    Add education
-                </p>
+                    <h3
+                        style={{
+                            fontSize: "18px",
+                            fontWeight: "700",
+                            display: "inline-block",
+                        }}
+                    >
+                        Education
+                    </h3>
+                    <p
+                        style={{
+                            display: "inline-block",
+                            textAlign: "end",
+                            color: "#0275B1",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Add education
+                    </p>
                 </div>
                 <div>
-                <div
-                    style={{
-                        display: "flex",
-                        columnGap: "20px",
-                        marginTop: "20px",
-                        paddingBottom:"25px",
-                        borderBottom:"2px solid #dddddd"
-                    }}
-                >
-                    <Image className="experience_img" imgsrc={p3} />
-                    <div>
-                        <h4 style={{ marginBottom: "10px" }}>
-                        Moscow State Linguistic University
-                        </h4>
-                        <p>Bachelor's degree Field Of StudyComputer and Information Systems Security/Information Assurance</p>
-                        <p
-                            style={{
-                                fontWeight: "300",
-                                marginTop: "5px",
-                                marginBottom: "10px",
-                            }}
-                        >
-                        2013 — 2017
-                        </p>
-                        <p>
-                        Additional English classes and UX profile courses​.
-                        </p>
+                    <div className="experience_box">
+                        <Image className="experience_img" imgsrc={p3} />
+                        <div>
+                            <h4 style={{ marginBottom: "10px" }}>
+                                Moscow State Linguistic University
+                            </h4>
+                            <p>
+                                Bachelor's degree Field Of StudyComputer and
+                                Information Systems Security/Information
+                                Assurance
+                            </p>
+                            <p
+                                style={{
+                                    fontWeight: "300",
+                                    marginTop: "5px",
+                                    marginBottom: "10px",
+                                }}
+                            >
+                                2013 — 2017
+                            </p>
+                            <p>
+                                Additional English classes and UX profile
+                                courses​.
+                            </p>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
         </>
