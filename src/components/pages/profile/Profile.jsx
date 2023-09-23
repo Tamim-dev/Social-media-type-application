@@ -11,6 +11,7 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import { FaLocationArrow } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import { Outlet, useLocation, Link } from "react-router-dom";
+import Profileinfomation from "../../Profileinfomation";
 
 const Profile = () => {
     // const db = getDatabase();
@@ -128,6 +129,10 @@ const Profile = () => {
                                         </button>
                                     </Link>
                                 </div>
+
+                                {location.pathname == "/social/profile" && (
+                                    <Profileinfomation/>
+                                )}
                             </div>
                         </Grid>
                         <Grid xs={3}>

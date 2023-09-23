@@ -93,3 +93,20 @@
     margin-top: 20px;
     align-items: center;
 }
+
+.about_box{
+    margin-top: 30px;
+    padding: 30px;
+    background: #ffffff;
+}
+
+.experience_img{
+    width: 62px;
+    height: 62px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.experience_box:last-child{
+    border-bottom: none;
+}
