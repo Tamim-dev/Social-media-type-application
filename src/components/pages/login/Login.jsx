@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { BsLinkedin } from "react-icons/bs";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { userdata } from "../../features/users/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 let initialvalue = {
@@ -23,6 +23,13 @@ const Login = () => {
     const notify = (mes) => toast.error(mes);
     const notifys = (mes) => toast.success(mes);
     let [values, setValues] = useState(initialvalue);
+    let userData = useSelector((state)=>state.loginuser.loginuser)
+
+    useEffect(() => {
+        if(userData != null){
+            navigate("/social/profile")
+        }
+    }, []);
 
 
     let handelchange = (e) => {

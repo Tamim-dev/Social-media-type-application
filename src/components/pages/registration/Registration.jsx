@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "./registration.css";
 import { BsLinkedin } from "react-icons/bs";
 import TextField from "@mui/material/TextField";
@@ -13,6 +13,7 @@ import {
     updateProfile,
 } from "firebase/auth";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 let initialvalue = {
     email: "",
@@ -27,6 +28,13 @@ const Registration = () => {
     const navigate = useNavigate();
     const notify = (mes) => toast.error(mes);
     let [values, setValues] = useState(initialvalue);
+    let userData = useSelector((state)=>state.loginuser.loginuser)
+
+    useEffect(() => {
+        if(userData != null){
+            navigate("/social/profile")
+        }
+    }, []);
 
     let handelChange = (e) => {
         setValues({

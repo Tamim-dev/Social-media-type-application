@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import "./rotlayout.css";
 import { Outlet } from "react-router-dom";
 import { BsLinkedin } from "react-icons/bs";
@@ -15,6 +15,13 @@ const Rotlayout = () => {
     const auth = getAuth();
     const dispatch = useDispatch();
     let navigate = useNavigate();
+    let userData = useSelector((state)=>state.loginuser.loginuser)
+
+    useEffect(() => {
+        if(userData == null){
+            navigate("/login")
+        }
+    }, []);
 
     let handellogout = () => {
         signOut(auth).then(() => {
