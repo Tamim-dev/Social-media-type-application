@@ -131,7 +131,22 @@ const Profile = () => {
                             </div>
                         </Grid>
                         <Grid xs={3}>
-                            <div className="sidebar_profile"></div>
+                            <div className="sidebar_profile">
+                                <div className="sidebar_profile_heading">
+                                    <h4>10 Friends</h4>
+                                    <h4>view all</h4>
+                                </div>
+                                <div className="sidebar_profile_box">
+                                    <Image
+                                        className="sidebar_profile_img"
+                                        imgsrc={profile}
+                                    />
+                                    <div>
+                                        <h3>Darlene Black</h3>
+                                        <p>HR-manager, 10 000 connec...</p>
+                                    </div>
+                                </div>
+                            </div>
                         </Grid>
                     </Grid>
                 </Container>

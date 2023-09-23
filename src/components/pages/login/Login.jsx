@@ -58,6 +58,7 @@ const Login = () => {
             })
             .catch((error) => {
                 const errorCode = error.code;
+                console.log(errorCode);
                 if (errorCode.includes("auth/invalid-email")) {
                     notify("Invalid your email")
                     setValues({
