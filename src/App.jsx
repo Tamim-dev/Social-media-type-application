@@ -8,7 +8,7 @@ import {
 import Registration from "./components/pages/registration/Registration";
 import Login from "./components/pages/login/Login";
 import Rotlayout from "./components/rotlayout/Rotlayout";
-import Feed from "./components/pages/Feed";
+import Feed from "./components/pages/feed/Feed";
 import Profile from "./components/pages/profile/Profile";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
