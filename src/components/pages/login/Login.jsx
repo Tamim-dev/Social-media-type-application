@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { userdata } from "../../features/users/userSlice";
 import { useDispatch,useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { VscEyeClosed } from "react-icons/vsc";
+import { TiEye } from "react-icons/ti";
 
 let initialvalue = {
     email: "",
@@ -23,6 +25,7 @@ const Login = () => {
     const notify = (mes) => toast.error(mes);
     const notifys = (mes) => toast.success(mes);
     let [values, setValues] = useState(initialvalue);
+    let [eye, setEye] = useState(true);
     let userData = useSelector((state)=>state.loginuser.loginuser)
 
     useEffect(() => {
@@ -113,15 +116,37 @@ const Login = () => {
                     {values.error.includes("enteryouremail") && (
                         <Alert severity="error">Please enter your Email</Alert>
                     )}
+                    <div style={{ position: "relative" }}>
                     <TextField
                         className="registrationTextfield"
                         id="outlined-basic"
                         label="Password"
                         variant="outlined"
                         name="password"
+                        type={eye ?"password":"text"}
                         value={values.password}
                         onChange={handelchange}
                     />
+                    {eye ? (
+                        <VscEyeClosed
+                            onClick={() => setEye(!eye)}
+                            style={{
+                                position: "absolute",
+                                top: "30px",
+                                right: "15px",
+                            }}
+                        />
+                    ) : (
+                        <TiEye
+                            onClick={() => setEye(!eye)}
+                            style={{
+                                position: "absolute",
+                                top: "30px",
+                                right: "15px",
+                            }}
+                        />
+                    )}
+                    </div>
                     {values.error.includes("enteryourpassword") && (
                         <Alert severity="error">Please enter your Email</Alert>
                     )}

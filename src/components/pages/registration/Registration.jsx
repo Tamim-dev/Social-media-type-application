@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./registration.css";
 import { BsLinkedin } from "react-icons/bs";
 import TextField from "@mui/material/TextField";
@@ -14,6 +14,8 @@ import {
 } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { VscEyeClosed } from "react-icons/vsc";
+import { TiEye } from "react-icons/ti";
 
 let initialvalue = {
     email: "",
@@ -28,11 +30,13 @@ const Registration = () => {
     const navigate = useNavigate();
     const notify = (mes) => toast.error(mes);
     let [values, setValues] = useState(initialvalue);
-    let userData = useSelector((state)=>state.loginuser.loginuser)
+    let [eye, setEye] = useState(true);
+
+    let userData = useSelector((state) => state.loginuser.loginuser);
 
     useEffect(() => {
-        if(userData != null){
-            navigate("/social/profile")
+        if (userData != null) {
+            navigate("/social/profile");
         }
     }, []);
 
@@ -89,7 +93,7 @@ const Registration = () => {
             .catch((error) => {
                 const errorCode = error.code;
                 if (errorCode.includes("auth/invalid-email")) {
-                    notify("Invalid your email")
+                    notify("Invalid your email");
                     setValues({
                         ...values,
                         email: "",
@@ -98,7 +102,7 @@ const Registration = () => {
                     });
                 }
                 if (errorCode.includes("auth/email-already-in-use")) {
-                    notify("Already in use your email")
+                    notify("Already in use your email");
                     setValues({
                         ...values,
                         email: "",
@@ -150,21 +154,42 @@ const Registration = () => {
                             Please enter your Fullname
                         </Alert>
                     )}
-                    <TextField
-                        className="registrationTextfield"
-                        id="outlined-basic"
-                        label="Password"
-                        variant="outlined"
-                        type="password"
-                        name="password"
-                        value={values.password}
-                        onChange={handelChange}
-                    />
-                    {values.error.includes("enteryourpassword") && (
-                        <Alert severity="error">
-                            Please enter your Password
-                        </Alert>
-                    )}
+                    <div style={{ position: "relative" }}>
+                        <TextField
+                            className="registrationTextfield"
+                            id="outlined-basic"
+                            label="Password"
+                            variant="outlined"
+                            type={eye ?"password":"text"}
+                            name="password"
+                            value={values.password}
+                            onChange={handelChange}
+                        />
+                        {eye ? (
+                            <VscEyeClosed
+                                onClick={() => setEye(!eye)}
+                                style={{
+                                    position: "absolute",
+                                    top: "30px",
+                                    right: "15px",
+                                }}
+                            />
+                        ) : (
+                            <TiEye
+                                onClick={() => setEye(!eye)}
+                                style={{
+                                    position: "absolute",
+                                    top: "30px",
+                                    right: "15px",
+                                }}
+                            />
+                        )}
+                        {values.error.includes("enteryourpassword") && (
+                            <Alert severity="error">
+                                Please enter your Password
+                            </Alert>
+                        )}
+                    </div>
                     <Button
                         className="registrationButton"
                         variant="contained"
