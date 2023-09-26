@@ -10,6 +10,7 @@ import { FaLocationArrow } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import { Outlet, useLocation, Link } from "react-router-dom";
 import Profileinfomation from "../../Profileinfomation";
+import{SiGooglenews} from "react-icons/si"
 
 const Profile = () => {
     // const db = getDatabase();
@@ -135,7 +136,7 @@ const Profile = () => {
                                                     : "profile_button"
                                             }
                                         >
-                                            NEWSFEED
+                                           <SiGooglenews/> NEWSFEED
                                         </button>
                                     </Link>
                                 </div>
@@ -148,7 +149,7 @@ const Profile = () => {
                         <Grid xs={3}>
                             <div className="sidebar_profile">
                                 <div className="sidebar_profile_heading">
-                                    <h4>10 Friends</h4>
+                                    <h4>User</h4>
                                     <h4>view all</h4>
                                 </div>
                                 <div className="sidebar_profile_box">

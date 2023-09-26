@@ -12,8 +12,8 @@ import Feed from "./components/pages/feed/Feed";
 import Profile from "./components/pages/profile/Profile";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Friends from "./components/Friends";
-import Post from "./components/Post";
+import Friends from "./components/friend/Friends";
+import Post from "./components/post/Post";
 
 const router = createBrowserRouter(
     createRoutesFromElements(

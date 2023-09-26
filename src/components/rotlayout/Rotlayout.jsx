@@ -1,6 +1,6 @@
 import React,{useEffect} from "react";
 import "./rotlayout.css";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { BsLinkedin } from "react-icons/bs";
 import Container from "../Container";
 import Image from "../Image";
@@ -37,6 +37,7 @@ const Rotlayout = () => {
                     <div className="rotlayout_box">
                         <BsLinkedin className="rotlayout_icon" />
                         <div style={{ position: "relative" }}>
+                            <Link to={"/social/profile"} style={{textDecoration:"none",color:"#262626"}}>
                             <div className="rotlayout_profile_box">
                                 <Image
                                     className="rotlayout_profile_img"
@@ -51,6 +52,7 @@ const Rotlayout = () => {
                                     Dmitry Kargaev
                                 </h3>
                             </div>
+                            </Link>
                             <TbLogout2
                                 style={{
                                     position: "absolute",

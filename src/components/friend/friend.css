@@ -1,0 +1,18 @@
+.friend_section{
+    background: #f7f9fb;
+    /* background: #5daefe; */
+    padding: 30px 0 0 90px;
+    position: relative;
+}
+
+.friend_box{
+    background: #fff;
+    padding: 30px;
+}
+
+.friend_profile{
+    width: 100%;
+    padding: 25px 20px;
+    background: #ffffff;
+    margin-left: 20px;
+}
