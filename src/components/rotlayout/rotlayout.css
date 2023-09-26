@@ -1,5 +1,9 @@
 .rotlayout_header{
     padding: 10px 30px;
+    position:fixed;
+    background: #fff;
+    width: 100%;
+    z-index: 1;
 }
 
 .rotlayout_icon{

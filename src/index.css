@@ -9,3 +9,31 @@
     max-width: 1360px;
     margin: 0 auto;
 }
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .tooltip .tooltiptext {
+    position: absolute;
+    visibility: hidden;
+    width: 200px;
+    background-color: rgb(255, 255, 255);
+    color: #262626;
+    text-align: center;
+    border-radius: 6px;
+    padding: 15px 0;
+    z-index: 1;
+    top: 0;
+    font-size: 20px;
+    right: 0px;
+    border: 1px solid #00000064;
+    opacity: 0;
+    transition: opacity .8s;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }

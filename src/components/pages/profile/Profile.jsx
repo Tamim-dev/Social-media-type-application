@@ -126,10 +126,22 @@ const Profile = () => {
                                             POST
                                         </button>
                                     </Link>
+                                    <Link to={"/social/feed"}>
+                                        <button
+                                            className={
+                                                location.pathname ==
+                                                "/social/feed"
+                                                    ? "profile_button_active"
+                                                    : "profile_button"
+                                            }
+                                        >
+                                            NEWSFEED
+                                        </button>
+                                    </Link>
                                 </div>
 
                                 {location.pathname == "/social/profile" && (
-                                    <Profileinfomation/>
+                                    <Profileinfomation />
                                 )}
                             </div>
                         </Grid>
