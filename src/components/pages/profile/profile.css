@@ -1,7 +1,7 @@
 .profile_section {
     background: #f7f9fb;
     /* background: #5daefe; */
-    padding: 100px 0 0 90px;
+    padding: 100px 0 0 0px;
     position: relative;
 }
 
@@ -53,8 +53,10 @@
     height: 545px;
     padding: 25px 20px;
     background: #ffffff;
+    /* border: 2px solid #00000073; */
     margin-left: 20px;
     overflow-y: scroll;
+    border-radius: 5px;
 }
 
 .profile_button {
@@ -116,5 +118,5 @@
 }
 
 .experience_box:last-child {
-    border-bottom: 0px solid ;
+    border-bottom: 0px solid;
 }

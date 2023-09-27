@@ -14,6 +14,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Friends from "./components/friend/Friends";
 import Post from "./components/post/Post";
+import User from "./components/user/User";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
             <Route path="/social" element={<Rotlayout />}>
                 <Route path="profile" element={<Profile />}>
                     <Route path="friend" element={<Friends />}></Route>
+                    <Route path="user" element={<User />}></Route>
                     <Route path="post" element={<Post />}></Route>
                 </Route>
                 <Route path="feed" element={<Feed />}></Route>
