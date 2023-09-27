@@ -3,12 +3,10 @@ import "./feed.css";
 import { BsImage, BsThreeDots } from "react-icons/bs";
 import { RiSendPlaneFill } from "react-icons/ri";
 import Container from "../../Container";
-import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Image from "../../Image";
 import profile from "../../../assets/profile.jpeg";
 import cover from "../../../assets/cover.png";
-import postimg from "../../../assets/postimg.png";
 import ModalImage from "react-modal-image";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -104,6 +102,7 @@ const Feed = () => {
                             </div>
                         </div>
 
+                        <div style={{display:"flex",flexDirection:"column-reverse"}}>
                         {post.map((item) => (
                             item.postcreatorid != userData.uid &&
                             <div
@@ -144,6 +143,7 @@ const Feed = () => {
                                 )}
                             </div>
                         ))}
+                        </div>
                     </Grid>
                     <Grid xs={3}>
                         <Link

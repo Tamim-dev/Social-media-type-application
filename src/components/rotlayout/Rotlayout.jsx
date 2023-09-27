@@ -57,7 +57,7 @@ const Rotlayout = () => {
                                 style={{
                                     position: "absolute",
                                     top: "24px",
-                                    left: "155px",
+                                    left: "90px",
                                     fontSize: "20px",
                                     cursor:"pointer"
                                 }}

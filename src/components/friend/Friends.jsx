@@ -42,7 +42,6 @@ const Friends = () => {
                 }
             });
             setFriend(arr);
-            console.log(arr);
         });
     }, []);
 
