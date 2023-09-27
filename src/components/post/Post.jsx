@@ -13,10 +13,23 @@ import { Link } from "react-router-dom";
 
 const Post = () => {
     return (
-        <section style={{paddingTop:"30px"}} className="feed_section">
+        <section style={{ paddingTop: "30px" }} className="feed_section">
             <Container>
                 <Grid container>
                     <Grid xs={9}>
+                        <div className="feed_box">
+                            <h4 className="feed_headline">NEW POST</h4>
+                            <div className="feed_input_box">
+                                <textarea
+                                    placeholder="What’s on your mind?"
+                                    className="textarea"
+                                />
+                                <div>
+                                    <BsImage className="feed_send_img" />
+                                    <RiSendPlaneFill className="feed_send_icon" />
+                                </div>
+                            </div>
+                        </div>
                         <div className="feed_box">
                             <div className="feed_icon_dot">
                                 <BsThreeDots />

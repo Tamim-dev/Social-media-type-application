@@ -15,11 +15,13 @@ import {
 } from "firebase/database";
 import { useSelector } from "react-redux";
 import { MdDownloadDone, MdOutlineRemove } from "react-icons/md";
+import { HiUserRemove } from "react-icons/hi";
 
 const Friends = () => {
     const db = getDatabase();
     let userData = useSelector((state) => state.loginuser.loginuser);
     let [friendrequest, setFriendrequest] = useState([]);
+    let [friend, setFriend] = useState([]);
 
     useEffect(() => {
         onValue(ref(db, "friendrequest/"), (snapshot) => {
@@ -29,19 +31,38 @@ const Friends = () => {
             });
             setFriendrequest(arr);
         });
+        onValue(ref(db, "friend/"), (snapshot) => {
+            let arr = [];
+            snapshot.forEach((item) => {
+                if (
+                    item.val().reqsenderid == userData.uid ||
+                    item.val().reqreceiverid == userData.uid
+                ) {
+                    arr.push({ ...item.val(), id: item.key });
+                }
+            });
+            setFriend(arr);
+            console.log(arr);
+        });
     }, []);
 
-    let handelreqadd =(item)=>{
+    let handelreqadd = (item) => {
         set(push(ref(db, "friend/")), {
-            ...item
-        }).then(()=>{
+            ...item,
+        }).then(() => {
             remove(ref(db, "friendrequest/" + item.id));
-        })
-    }
+        });
+    };
+
+    
+    let handelunfriend = (item) => {
+        remove(ref(db, "friend/" + item.id));
+    };
 
     let handelreqcancel = (item) => {
         remove(ref(db, "friendrequest/" + item.id));
     };
+
 
     return (
         <section className="friend_section">
@@ -59,27 +80,43 @@ const Friends = () => {
                                     FRIENRS
                                 </h2>
                                 <div className="feed_icon_dot_box"></div>
-                                <div
-                                    className="friend_profile"
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                    }}
-                                >
-                                    <div className="sidebar_profile_box">
-                                        <Image
-                                            className="sidebar_profile_img"
-                                            imgsrc={profile}
-                                        />
-                                        <div>
-                                            <h3>Darlene Black</h3>
-                                            <p>HR-manager, 10 000 connec...</p>
+                                {friend.map((item) => (
+                                    <div
+                                        className="friend_profile"
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                        }}
+                                    >
+                                        <div className="sidebar_profile_box">
+                                            <Image
+                                                className="sidebar_profile_img"
+                                                imgsrc={profile}
+                                            />
+                                            <div>
+                                                {item.reqsenderid ==
+                                                userData.uid ? (
+                                                    <h3>
+                                                        {item.reqreceivername}
+                                                    </h3>
+                                                ) : (
+                                                    <h3>
+                                                        {item.reqsendername}
+                                                    </h3>
+                                                )}
+                                                <p>
+                                                    HR-manager, 10 000 connec...
+                                                </p>
+                                            </div>
                                         </div>
+                                        <Button onClick={()=>handelunfriend(item)} variant="contained" color="error">
+                                            <HiUserRemove style={{
+                                                fontSize:
+                                                    "20px",
+                                            }}/>
+                                        </Button>
                                     </div>
-                                    <Button variant="contained">
-                                        Unfriend
-                                    </Button>
-                                </div>
+                                ))}
                             </div>
                         </Grid>
 
@@ -129,9 +166,7 @@ const Friends = () => {
                                                         variant="contained"
                                                         color="success"
                                                         onClick={() =>
-                                                            handelreqadd(
-                                                                item
-                                                            )
+                                                            handelreqadd(item)
                                                         }
                                                     >
                                                         <MdDownloadDone
