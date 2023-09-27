@@ -8,11 +8,20 @@
 .friend_box{
     background: #fff;
     padding: 30px;
+    width: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .friend_profile{
-    width: 100%;
-    padding: 25px 20px;
+    padding: 0px 0px 25px 0;
     background: #ffffff;
     margin-left: 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+.friend_profile:last-child{
+    border-bottom: 0px solid ;
 }

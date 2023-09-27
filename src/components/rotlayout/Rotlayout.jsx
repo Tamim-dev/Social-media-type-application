@@ -43,14 +43,14 @@ const Rotlayout = () => {
                                     className="rotlayout_profile_img"
                                     imgsrc={profile}
                                 />
-                                <h3
+                                <h2
                                     style={{
                                         fontSize: "16px",
                                         fontWeight: "600",
                                     }}
                                 >
-                                    Dmitry Kargaev
-                                </h3>
+                                    {userData.displayName}
+                                </h2>
                             </div>
                             </Link>
                             <TbLogout2

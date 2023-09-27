@@ -12,19 +12,21 @@ import { Outlet, useLocation, Link } from "react-router-dom";
 import Profileinfomation from "../../Profileinfomation";
 import { SiGooglenews } from "react-icons/si";
 import User from "../../user/User";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
     // const db = getDatabase();
     // let [user, setUser] = useState([]);
+    let userData = useSelector((state) => state.loginuser.loginuser);
     let location = useLocation();
 
     // useEffect(() => {
-    //     onValue(ref(db, "user/"), (snapshot) => {
-    //         let arr=[]
-    //         snapshot.forEach((item)=>{
-    //             arr.push()
-    //             console.log(item.val());
-    //         })
+    //     onValue(ref(db, "users/"), (snapshot) => {
+    //         let arr = [];
+    //         snapshot.forEach((item) => {
+    //             arr.push(item.val());
+    //         });
+    //         setUser(arr);
     //     });
     // }, []);
     return (
@@ -54,14 +56,14 @@ const Profile = () => {
                                         justifyContent: "space-between",
                                     }}
                                 >
-                                    <h3
+                                    <h2
                                         style={{
                                             fontSize: "18px",
                                             fontWeight: "700",
                                         }}
                                     >
-                                        Dmitry Kargaev
-                                    </h3>
+                                        {userData.displayName}
+                                    </h2>
                                     <p>
                                         <FaLocationArrow
                                             style={{
@@ -161,7 +163,7 @@ const Profile = () => {
                                         <h4>view all</h4>
                                     </Link>
                                 </div>
-                                <User/>
+                                <User />
                             </div>
                         </Grid>
                     </Grid>
