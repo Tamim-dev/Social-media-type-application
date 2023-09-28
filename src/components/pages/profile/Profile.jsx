@@ -11,14 +11,35 @@ import Button from "@mui/material/Button";
 import { Outlet, useLocation, Link } from "react-router-dom";
 import Profileinfomation from "../../Profileinfomation";
 import { SiGooglenews } from "react-icons/si";
+import { BiEdit } from "react-icons/bi";
 import User from "../../user/User";
 import { useSelector } from "react-redux";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import { MuiTelInput } from "mui-tel-input";
+
+const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 800,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+};
 
 const Profile = () => {
     // const db = getDatabase();
-    // let [user, setUser] = useState([]);
     let userData = useSelector((state) => state.loginuser.loginuser);
     let location = useLocation();
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const [value, setValue] = useState("");
 
     // useEffect(() => {
     //     onValue(ref(db, "users/"), (snapshot) => {
@@ -41,6 +62,14 @@ const Profile = () => {
                                         className="profile_part_cover_img"
                                         imgsrc={cover}
                                     />
+                                    <Button
+                                        className="proflie_edit_btn"
+                                        variant="contained"
+                                        onClick={handleOpen}
+                                    >
+                                        <BiEdit />
+                                        Edit profile
+                                    </Button>
                                 </div>
                                 <div className="profile_part_profile">
                                     <Image
@@ -92,6 +121,88 @@ const Profile = () => {
                                     Contact info
                                 </Button>
                             </div>
+                            {/*modal*/}
+
+                            <Modal
+                                open={open}
+                                onClose={handleClose}
+                                aria-labelledby="modal-modal-title"
+                                aria-describedby="modal-modal-description"
+                            >
+                                <Box sx={style}>
+                                    <Typography
+                                        id="modal-modal-title"
+                                        variant="h5"
+                                        component="h2"
+                                    >
+                                        Edit Profile
+                                    </Typography>
+                                    <Typography
+                                        id="modal-modal-description"
+                                        sx={{ mt: 2 }}
+                                    >
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                            }}
+                                        >
+                                            <TextField
+                                                style={{ width: "45%" }}
+                                                id="outlined-basic"
+                                                label="Name"
+                                                variant="outlined"
+                                            />
+                                            <TextField
+                                                style={{ width: "50%" }}
+                                                id="outlined-basic"
+                                                label="Address"
+                                                variant="outlined"
+                                            />
+                                        </div>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                margin: "20px 0",
+                                            }}
+                                        >
+                                            <MuiTelInput
+                                                label="Phone Number"
+                                                variant="outlined"
+                                                style={{ width: "50%" }}
+                                                value={value}
+                                                onChange={(newValue) =>
+                                                    setValue(newValue)
+                                                }
+                                            />
+                                            <TextField
+                                                style={{ width: "45%" }}
+                                                id="outlined-basic"
+                                                label="Date of Birth"
+                                                variant="outlined"
+                                                type="date"
+                                                focused
+                                            />
+                                        </div>
+                                        <TextField
+                                            style={{ width: "70%" }}
+                                            id="outlined-basic"
+                                            label="Email"
+                                            variant="outlined"
+                                        />
+                                        <TextField
+                                            style={{ width: "100%",margin:"20px 0" }}
+                                            id="outlined-textarea"
+                                            label="Info"
+                                            placeholder="Placeholder"
+                                            multiline
+                                        />
+                                    </Typography>
+                                </Box>
+                            </Modal>
+
+                            {/*modal*/}
                             <div>
                                 <div style={{ marginTop: "30px" }}>
                                     <Link to={"/social/profile"}>

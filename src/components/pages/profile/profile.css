@@ -164,3 +164,11 @@
     align-items: center;
     cursor: pointer;
 }
+
+.proflie_edit_btn{
+    position: absolute !important;
+    top: 20px !important;
+    right: 20px !important;
+    background: white !important;
+    color: #262626 !important;
+}
