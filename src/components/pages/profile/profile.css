@@ -120,3 +120,47 @@
 .experience_box:last-child {
     border-bottom: 0px solid;
 }
+
+.edit_icon {
+    color: #06000068;
+    margin-left: 10px;
+}
+
+.edit_icon:hover {
+    color: #0077b5;
+}
+
+.about_text {
+    word-break: break-all;
+}
+.p1 {
+    margin: 1rem;
+    display: block;
+}
+.input_experience {
+    width: 100%;
+    padding: 20px;
+    font-size: 16px;
+    margin: 10px 0;
+}
+.input2nd_experience {
+    width: 80%;
+    padding: 20px;
+    font-size: 16px;
+    margin: 10px 0;
+}
+.inputdate_experience {
+    width: 45%;
+    padding: 20px;
+    font-size: 16px;
+    margin: 10px 20px 10px 0;
+}
+.experience_icon {
+    margin-bottom: 10px;
+    display: flex;
+}
+.experience_icon span {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
