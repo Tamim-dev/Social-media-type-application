@@ -5,7 +5,7 @@ import Container from "../../Container";
 import Image from "../../Image";
 import profile from "../../../assets/profile.jpeg";
 import cover from "../../../assets/cover.png";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, push, ref, set, onValue } from "firebase/database";
 import { FaLocationArrow } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import { Outlet, useLocation, Link } from "react-router-dom";
@@ -32,95 +32,162 @@ const style = {
     p: 4,
 };
 
+let initialvalue = {
+    email: "",
+    fullname: "",
+    address: "",
+    info: "",
+    dateofbirth: "",
+};
+
 const Profile = () => {
-    // const db = getDatabase();
+    const db = getDatabase();
     let userData = useSelector((state) => state.loginuser.loginuser);
     let location = useLocation();
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const [value, setValue] = useState("");
+    const [openContactbtn, setOpenContactbtn] = useState(false);
+    const handleOpenContactbtn = () => setOpenContactbtn(true);
+    const handleCloseContactbtn = () => setOpenContactbtn(false);
+    const [phvalue, setPhvalue] = useState("");
+    const [user, setUser] = useState([]);
+    let [values, setValues] = useState(initialvalue);
 
-    // useEffect(() => {
-    //     onValue(ref(db, "users/"), (snapshot) => {
-    //         let arr = [];
-    //         snapshot.forEach((item) => {
-    //             arr.push(item.val());
-    //         });
-    //         setUser(arr);
-    //     });
-    // }, []);
+    useEffect(() => {
+        onValue(ref(db, "users/"), (snapshot) => {
+            let arr = [];
+            snapshot.forEach((item) => {
+                arr.push({ ...item.val(), id: item.key });
+            });
+            setUser(arr);
+        });
+    }, []);
+
+    let handelchange = (e) => {
+        setValues({
+            ...values,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    let handelupdateprofile = () => {
+        set(ref(db, "users/" + userData.uid), {
+            username: values.fullname,
+            email: values.email,
+            phonenumber: phvalue,
+            address: values.address,
+            dateofbirth: values.dateofbirth,
+            info: values.info,
+        }).then(() => {
+            setOpen(false);
+        });
+    };
+
     return (
         <>
             <section className="profile_section">
                 <Container>
                     <Grid container>
                         <Grid xs={9}>
-                            <div className="profile_img_box">
-                                <div className="profile_part_cover">
-                                    <Image
-                                        className="profile_part_cover_img"
-                                        imgsrc={cover}
-                                    />
-                                    <Button
-                                        className="proflie_edit_btn"
-                                        variant="contained"
-                                        onClick={handleOpen}
-                                    >
-                                        <BiEdit />
-                                        Edit profile
-                                    </Button>
-                                </div>
-                                <div className="profile_part_profile">
-                                    <Image
-                                        className="profile_part_profile_img"
-                                        imgsrc={profile}
-                                    />
-                                </div>
-                            </div>
-                            <div className="profile_details_box">
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                    }}
-                                >
-                                    <h2
-                                        style={{
-                                            fontSize: "18px",
-                                            fontWeight: "700",
-                                        }}
-                                    >
-                                        {userData.displayName}
-                                    </h2>
-                                    <p>
-                                        <FaLocationArrow
-                                            style={{
-                                                color: "#0275B1",
-                                                fontSize: "14px",
-                                                marginRight: "10px",
-                                            }}
-                                        />
-                                        Saint Petersburg, Russian Federation
-                                    </p>
-                                </div>
-                                <p
-                                    style={{
-                                        marginTop: "10px",
-                                        marginBottom: "15px",
-                                    }}
-                                >
-                                    Freelance UX/UI designer, 80+ projects in
-                                    web design, mobile apps (iOS & android) and
-                                    creative projects. Open to offers.
-                                </p>
-                                <Button
-                                    className="button_color"
-                                    variant="contained"
-                                >
-                                    Contact info
-                                </Button>
-                            </div>
+                            {user.map(
+                                (item) =>
+                                    userData.uid == item.id && (
+                                        <>
+                                            <div className="profile_img_box">
+                                                <div className="profile_part_cover">
+                                                    <Image
+                                                        className="profile_part_cover_img"
+                                                        imgsrc={cover}
+                                                    />
+                                                    <Button
+                                                        className="proflie_edit_btn"
+                                                        variant="contained"
+                                                        onClick={handleOpen}
+                                                    >
+                                                        <BiEdit />
+                                                        Edit profile
+                                                    </Button>
+                                                </div>
+                                                <div className="profile_part_profile">
+                                                    <Image
+                                                        className="profile_part_profile_img"
+                                                        imgsrc={profile}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="profile_details_box">
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        justifyContent:
+                                                            "space-between",
+                                                    }}
+                                                >
+                                                    <h2
+                                                        style={{
+                                                            fontSize: "18px",
+                                                            fontWeight: "700",
+                                                        }}
+                                                    >
+                                                        {item.username}
+                                                    </h2>
+                                                    <p>
+                                                        <FaLocationArrow
+                                                            style={{
+                                                                color: "#0275B1",
+                                                                fontSize:
+                                                                    "14px",
+                                                                marginRight:
+                                                                    "10px",
+                                                            }}
+                                                        />
+                                                        {item.address}
+                                                    </p>
+                                                </div>
+                                                <p
+                                                    style={{
+                                                        marginTop: "10px",
+                                                        marginBottom: "15px",
+                                                    }}
+                                                >
+                                                    {item.info}
+                                                </p>
+                                                <Button
+                                                    className="button_color"
+                                                    variant="contained"
+                                                    onClick={handleOpenContactbtn}
+                                                >
+                                                    Contact info
+                                                </Button>
+                                            </div>
+                                            <Modal
+                                                open={openContactbtn}
+                                                onClose={handleCloseContactbtn}
+                                                aria-labelledby="modal-modal-title"
+                                                aria-describedby="modal-modal-description"
+                                            >
+                                                <Box sx={style}>
+                                                    <Typography
+                                                        id="modal-modal-title"
+                                                        variant="h6"
+                                                        component="h2"
+                                                    >
+                                                        {item.username}
+                                                    </Typography>
+                                                    <Typography
+                                                        id="modal-modal-description"
+                                                        sx={{ mt: 2 }}
+                                                    >
+                                                        <h4>{item.phonenumber}</h4>
+                                                        <h4>{item.dateofbirth}</h4>
+                                                        <h4>{item.email}</h4>
+                                                    </Typography>
+                                                </Box>
+                                            </Modal>
+                                        </>
+                                    )
+                            )}
                             {/*modal*/}
 
                             <Modal
@@ -152,12 +219,16 @@ const Profile = () => {
                                                 id="outlined-basic"
                                                 label="Name"
                                                 variant="outlined"
+                                                onChange={handelchange}
+                                                name="fullname"
                                             />
                                             <TextField
                                                 style={{ width: "50%" }}
                                                 id="outlined-basic"
                                                 label="Address"
                                                 variant="outlined"
+                                                onChange={handelchange}
+                                                name="address"
                                             />
                                         </div>
                                         <div
@@ -171,9 +242,9 @@ const Profile = () => {
                                                 label="Phone Number"
                                                 variant="outlined"
                                                 style={{ width: "50%" }}
-                                                value={value}
+                                                value={phvalue}
                                                 onChange={(newValue) =>
-                                                    setValue(newValue)
+                                                    setPhvalue(newValue)
                                                 }
                                             />
                                             <TextField
@@ -183,6 +254,8 @@ const Profile = () => {
                                                 variant="outlined"
                                                 type="date"
                                                 focused
+                                                onChange={handelchange}
+                                                name="dateofbirth"
                                             />
                                         </div>
                                         <TextField
@@ -190,14 +263,33 @@ const Profile = () => {
                                             id="outlined-basic"
                                             label="Email"
                                             variant="outlined"
+                                            onChange={handelchange}
+                                            name="email"
                                         />
                                         <TextField
-                                            style={{ width: "100%",margin:"20px 0" }}
+                                            style={{
+                                                width: "100%",
+                                                margin: "20px 0",
+                                            }}
                                             id="outlined-textarea"
                                             label="Info"
                                             placeholder="Placeholder"
                                             multiline
+                                            onChange={handelchange}
+                                            name="info"
                                         />
+                                        <Button
+                                            variant="contained"
+                                            onClick={handelupdateprofile}
+                                        >
+                                            <BiEdit
+                                                style={{
+                                                    marginRight: "10px",
+                                                    fontSize: "20px",
+                                                }}
+                                            />
+                                            Update profile
+                                        </Button>
                                     </Typography>
                                 </Box>
                             </Modal>

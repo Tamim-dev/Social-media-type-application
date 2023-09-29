@@ -22,6 +22,10 @@ const Rotlayout = () => {
             navigate("/login")
         }
     }, []);
+    if (userData == null) {
+        navigate("/login");
+        return;
+    }
 
     let handellogout = () => {
         signOut(auth).then(() => {
@@ -35,7 +39,7 @@ const Rotlayout = () => {
             <div className="rotlayout_header">
                 <Container>
                     <div className="rotlayout_box">
-                        <BsLinkedin className="rotlayout_icon" />
+                        <Link to={"/social/feed"}><BsLinkedin className="rotlayout_icon" /></Link>
                         <div style={{ position: "relative" }}>
                             <Link to={"/social/profile"} style={{textDecoration:"none",color:"#262626"}}>
                             <div className="rotlayout_profile_box">

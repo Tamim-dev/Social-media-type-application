@@ -129,6 +129,7 @@ const Registration = () => {
                 </p>
                 <div className="registrationTextfieldbox">
                     <TextField
+                        type="email"
                         className="registrationTextfield"
                         id="outlined-basic"
                         label="Email"
@@ -160,7 +161,7 @@ const Registration = () => {
                             id="outlined-basic"
                             label="Password"
                             variant="outlined"
-                            type={eye ?"password":"text"}
+                            type={eye ? "password" : "text"}
                             name="password"
                             value={values.password}
                             onChange={handelChange}
