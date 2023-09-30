@@ -156,7 +156,9 @@ const Profile = () => {
                                                 <Button
                                                     className="button_color"
                                                     variant="contained"
-                                                    onClick={handleOpenContactbtn}
+                                                    onClick={
+                                                        handleOpenContactbtn
+                                                    }
                                                 >
                                                     Contact info
                                                 </Button>
@@ -173,15 +175,52 @@ const Profile = () => {
                                                         variant="h6"
                                                         component="h2"
                                                     >
-                                                        {item.username}
+                                                        <h2>{item.username}</h2>
                                                     </Typography>
                                                     <Typography
                                                         id="modal-modal-description"
                                                         sx={{ mt: 2 }}
                                                     >
-                                                        <h4>{item.phonenumber}</h4>
-                                                        <h4>{item.dateofbirth}</h4>
-                                                        <h4>{item.email}</h4>
+                                                        <div className="Contact_info_box">
+                                                            <h3>
+                                                                Phone number :{" "}
+                                                            </h3>
+                                                            <h4
+                                                                style={{
+                                                                    color: "#262626",
+                                                                }}
+                                                            >
+                                                                {
+                                                                    item.phonenumber
+                                                                }
+                                                            </h4>
+                                                        </div>
+                                                        <div className="Contact_info_box">
+                                                            <h3>
+                                                                Date of birth :{" "}
+                                                            </h3>
+                                                            <h4
+                                                                style={{
+                                                                    color: "#262626",
+                                                                }}
+                                                            >
+                                                                {
+                                                                    item.dateofbirth
+                                                                }
+                                                            </h4>
+                                                        </div>
+                                                        <div className="Contact_info_box">
+                                                            <h3>
+                                                                Email :{" "}
+                                                            </h3>
+                                                            <h4
+                                                                style={{
+                                                                    color: "#262626",
+                                                                }}
+                                                            >
+                                                                {item.email}
+                                                            </h4>
+                                                        </div>
                                                     </Typography>
                                                 </Box>
                                             </Modal>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "./Image";
 import p1 from "../assets/p1.png";
-import p2 from "../assets/p2.png";
 import p3 from "../assets/p3.png";
 import { BiEdit } from "react-icons/bi";
 import { MdDownloadDone, MdDelete } from "react-icons/md";
@@ -9,6 +8,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import ModalImage from "react-modal-image";
 import {
     getDatabase,
     ref,
@@ -19,6 +19,12 @@ import {
 } from "firebase/database";
 import { useSelector } from "react-redux";
 import { Checkbox } from "@mui/material";
+import {
+    getStorage,
+    ref as imgref,
+    uploadBytesResumable,
+    getDownloadURL,
+} from "firebase/storage";
 
 const style = {
     position: "absolute",
@@ -43,6 +49,7 @@ let initialvalue = {
 
 const Profileinfomation = () => {
     const db = getDatabase();
+    const storage = getStorage();
     let userData = useSelector((state) => state.loginuser.loginuser);
     const [open, setOpen] = useState(false);
     const [openex, setOpenex] = useState(false);
@@ -53,6 +60,7 @@ const Profileinfomation = () => {
     const [about, setAbout] = useState([]);
     const [experience, setExperience] = useState([]);
     const [education, setEducation] = useState([]);
+    const [project, setProject] = useState([]);
     const [company, setCompanyname] = useState("");
     const [position, setPosition] = useState("");
     const [datepresent, setDatepresent] = useState("");
@@ -93,6 +101,14 @@ const Profileinfomation = () => {
             });
             setEducation(arr);
         });
+
+        onValue(ref(db, "project/"), (snapshot) => {
+            let arr = [];
+            snapshot.forEach((item) => {
+                arr.push({ ...item.val(), id: item.key });
+            });
+            setProject(arr);
+        });
     }, []);
 
     let handlechange = (e) => {
@@ -116,15 +132,13 @@ const Profileinfomation = () => {
         setOpenexedit(true);
         setCompanyname(item.workingat);
         setPosition(item.position);
-        setDatepresent(item.datepresent)
-        setCheckboxin(item.checkbox)
-        setDateleave(item.dateleave)
-        setAboutbox(item.aboutbox)
+        setDatepresent(item.datepresent);
+        setCheckboxin(item.checkbox);
+        setDateleave(item.dateleave);
+        setAboutbox(item.aboutbox);
     };
 
-    let handleExperienceedit =()=>{
-        
-    }
+    let handleExperienceedit = () => {};
 
     let handleexdelete = (item) => {
         remove(ref(db, "experience/" + item.id));
@@ -133,7 +147,6 @@ const Profileinfomation = () => {
     let handleedudelete = (item) => {
         remove(ref(db, "education/" + item.id));
     };
-    
 
     let handleExperience = () => {
         set(push(ref(db, "experience/")), {
@@ -151,13 +164,13 @@ const Profileinfomation = () => {
         });
     };
 
-    let handleEducation = ()=>{
+    let handleEducation = () => {
         set(push(ref(db, "education/")), {
             educationname: userData.displayName,
             educationid: userData.uid,
             educationimg: userData.photoURL,
-            University : exvalues.workingat,
-            Class : exvalues.position,
+            University: exvalues.workingat,
+            Class: exvalues.position,
             started: exvalues.datepresent,
             checkbox: exvalues.checkbox,
             graduation: exvalues.dateleave,
@@ -165,6 +178,29 @@ const Profileinfomation = () => {
         }).then(() => {
             setOpenedu(false);
         });
+    };
+
+    let handelproject = (e) => {
+        const storageRef = imgref(storage, `${e.target.files[0].name}`);
+        const uploadTask = uploadBytesResumable(storageRef, e.target.files[0]);
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {},
+            (error) => {},
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    set(push(ref(db, "project/")), {
+                        photoURL: downloadURL,
+                        projectwoner: userData.displayName,
+                        projectwonerid: userData.uid,
+                    });
+                });
+            }
+        );
+    };
+
+    let handelprojectdelete=(item)=>{
+        remove(ref(db, "project/" +item.id))
     }
 
     return (
@@ -186,18 +222,42 @@ const Profileinfomation = () => {
                 ))}
             </div>
             <div className="about_box">
-                <h3
-                    style={{
-                        fontSize: "18px",
-                        fontWeight: "700",
-                        display: "inline",
-                    }}
+                <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                    Projects
-                </h3>
-                <p style={{ display: "inline-block", marginLeft: "20px" }}>
-                    3 of 12
-                </p>
+                    <div>
+                        <h3
+                            style={{
+                                fontSize: "18px",
+                                fontWeight: "700",
+                                display: "inline",
+                            }}
+                        >
+                            Projects
+                        </h3>
+                        <p
+                            style={{
+                                display: "inline-block",
+                                marginLeft: "20px",
+                            }}
+                        >
+                            3 of 12
+                        </p>
+                    </div>
+                    <label>
+                        <input type="file" hidden onChange={handelproject} />
+                        <p
+                            style={{
+                                display: "inline-block",
+                                textAlign: "end",
+                                color: "#0275B1",
+                                cursor: "pointer",
+                            }}
+                        >
+                            Add projects
+                        </p>
+                    </label>
+                </div>
                 <div
                     style={{
                         display: "flex",
@@ -205,9 +265,17 @@ const Profileinfomation = () => {
                         marginTop: "20px",
                     }}
                 >
-                    <Image imgsrc={p1} />
-                    <Image imgsrc={p2} />
-                    <Image imgsrc={p3} />
+                    {project.map((item) => (
+                        <div className="projecthoverbox">
+                            <ModalImage
+                                small={item.photoURL}
+                                large={item.photoURL}
+                                alt="Hello World!"
+                                className="project_img"
+                            />
+                            <MdDelete onClick={()=>handelprojectdelete(item)} className="project_img_hover"/>
+                        </div>
+                    ))}
                 </div>
             </div>
             <div className="about_box">
@@ -296,40 +364,40 @@ const Profileinfomation = () => {
                     </p>
                 </div>
                 <div>
-                    {education.map((item)=>(
+                    {education.map((item) => (
                         <div className="experience_box">
-                        <Image className="experience_img" imgsrc={p3} />
-                        <div>
-                            <h4 style={{ marginBottom: "10px", display:'flex',alignItems:"center"}}>
-                                {item.University}
-                                <BiEdit
-                                        className="edit_icon"
-                                    />
+                            <Image className="experience_img" imgsrc={p3} />
+                            <div>
+                                <h4
+                                    style={{
+                                        marginBottom: "10px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {item.University}
+                                    <BiEdit className="edit_icon" />
                                     <MdDelete
                                         onClick={() => handleedudelete(item)}
                                         className="edit_icon"
                                     />
-                            </h4>
-                            <p>
-                                {item.Class}
-                            </p>
-                            <p
-                                style={{
-                                    fontWeight: "300",
-                                    marginTop: "5px",
-                                    marginBottom: "10px",
-                                }}
-                            >
-                            {item.started}{" "}
-                            {item.checkbox == "on"
-                                ? " — Present"
-                                : ` to ${item.graduation}`}
-                            </p>
-                            <p>
-                                {item.aboutbox}
-                            </p>
+                                </h4>
+                                <p>{item.Class}</p>
+                                <p
+                                    style={{
+                                        fontWeight: "300",
+                                        marginTop: "5px",
+                                        marginBottom: "10px",
+                                    }}
+                                >
+                                    {item.started}{" "}
+                                    {item.checkbox == "on"
+                                        ? " — Present"
+                                        : ` to ${item.graduation}`}
+                                </p>
+                                <p>{item.aboutbox}</p>
+                            </div>
                         </div>
-                    </div>
                     ))}
                 </div>
             </div>
