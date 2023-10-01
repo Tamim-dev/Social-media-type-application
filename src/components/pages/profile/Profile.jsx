@@ -34,7 +34,7 @@ const style = {
 
 let initialvalue = {
     email: "",
-    fullname: "",
+    username: "",
     address: "",
     info: "",
     dateofbirth: "",
@@ -45,13 +45,13 @@ const Profile = () => {
     let userData = useSelector((state) => state.loginuser.loginuser);
     let location = useLocation();
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [openContactbtn, setOpenContactbtn] = useState(false);
     const handleOpenContactbtn = () => setOpenContactbtn(true);
     const handleCloseContactbtn = () => setOpenContactbtn(false);
     const [phvalue, setPhvalue] = useState("");
     const [user, setUser] = useState([]);
+    const [currentuser, setCurrentuser] = useState([]);
     let [values, setValues] = useState(initialvalue);
 
     useEffect(() => {
@@ -62,6 +62,10 @@ const Profile = () => {
             });
             setUser(arr);
         });
+
+        onValue(ref(db, 'users/' + userData.uid), (snapshot) => {
+            setCurrentuser(snapshot.val())
+        });
     }, []);
 
     let handelchange = (e) => {
@@ -71,9 +75,20 @@ const Profile = () => {
         });
     };
 
+    let handleOpen = () => {
+        setOpen(true)
+        values.email = currentuser.email
+        values.username = currentuser.username
+        values.address = currentuser.address
+        values.info = currentuser.info
+        values.dateofbirth = currentuser.dateofbirth
+        setPhvalue(currentuser.phonenumber)
+    };
+
     let handelupdateprofile = () => {
         set(ref(db, "users/" + userData.uid), {
-            username: values.fullname,
+            ...currentuser,
+            username: values.username,
             email: values.email,
             phonenumber: phvalue,
             address: values.address,
@@ -210,9 +225,7 @@ const Profile = () => {
                                                             </h4>
                                                         </div>
                                                         <div className="Contact_info_box">
-                                                            <h3>
-                                                                Email :{" "}
-                                                            </h3>
+                                                            <h3>Email : </h3>
                                                             <h4
                                                                 style={{
                                                                     color: "#262626",
@@ -259,7 +272,8 @@ const Profile = () => {
                                                 label="Name"
                                                 variant="outlined"
                                                 onChange={handelchange}
-                                                name="fullname"
+                                                name="username"
+                                                value={values.username}
                                             />
                                             <TextField
                                                 style={{ width: "50%" }}
@@ -268,6 +282,7 @@ const Profile = () => {
                                                 variant="outlined"
                                                 onChange={handelchange}
                                                 name="address"
+                                                value={values.address}
                                             />
                                         </div>
                                         <div
@@ -295,6 +310,7 @@ const Profile = () => {
                                                 focused
                                                 onChange={handelchange}
                                                 name="dateofbirth"
+                                                value={values.dateofbirth}
                                             />
                                         </div>
                                         <TextField
@@ -304,6 +320,7 @@ const Profile = () => {
                                             variant="outlined"
                                             onChange={handelchange}
                                             name="email"
+                                            value={values.email}
                                         />
                                         <TextField
                                             style={{
@@ -316,6 +333,7 @@ const Profile = () => {
                                             multiline
                                             onChange={handelchange}
                                             name="info"
+                                            value={values.info}
                                         />
                                         <Button
                                             variant="contained"
