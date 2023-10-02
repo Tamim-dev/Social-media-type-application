@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, createRef } from "react";
 import "./profile.css";
 import Grid from "@mui/material/Grid";
 import Container from "../../Container";
 import Image from "../../Image";
 import profile from "../../../assets/profile.jpeg";
 import cover from "../../../assets/cover.png";
-import { getDatabase, push, ref, set, onValue } from "firebase/database";
+import { getDatabase, ref , set, onValue } from "firebase/database";
 import { FaLocationArrow } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import { Outlet, useLocation, Link } from "react-router-dom";
@@ -19,6 +19,9 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { MuiTelInput } from "mui-tel-input";
+import Cropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
+import { getStorage, ref as imgref, uploadString,getDownloadURL } from "firebase/storage";
 
 const style = {
     position: "absolute",
@@ -42,6 +45,7 @@ let initialvalue = {
 
 const Profile = () => {
     const db = getDatabase();
+    const storage = getStorage();
     let userData = useSelector((state) => state.loginuser.loginuser);
     let location = useLocation();
     const [open, setOpen] = useState(false);
@@ -51,8 +55,15 @@ const Profile = () => {
     const handleCloseContactbtn = () => setOpenContactbtn(false);
     const [phvalue, setPhvalue] = useState("");
     const [user, setUser] = useState([]);
-    const [currentuser, setCurrentuser] = useState([]);
+    let [currentuser, setCurrentuser] = useState([]);
     let [values, setValues] = useState(initialvalue);
+    const [opencropper, setOpencropper] = useState(false);
+    const handleOpencropper = () => setOpencropper(true);
+    const handleClosecropper = () => setOpencropper(false);
+
+    const [image, setImage] = useState(userData.photoURL);
+    const cropperRef = createRef();
+    const storageRef = imgref(storage, "some-child");
 
     useEffect(() => {
         onValue(ref(db, "users/"), (snapshot) => {
@@ -63,8 +74,8 @@ const Profile = () => {
             setUser(arr);
         });
 
-        onValue(ref(db, 'users/' + userData.uid), (snapshot) => {
-            setCurrentuser(snapshot.val())
+        onValue(ref(db, "users/" + userData.uid), (snapshot) => {
+            setCurrentuser(snapshot.val());
         });
     }, []);
 
@@ -76,13 +87,13 @@ const Profile = () => {
     };
 
     let handleOpen = () => {
-        setOpen(true)
-        values.email = currentuser.email
-        values.username = currentuser.username
-        values.address = currentuser.address
-        values.info = currentuser.info
-        values.dateofbirth = currentuser.dateofbirth
-        setPhvalue(currentuser.phonenumber)
+        setOpen(true);
+        values.email = currentuser.email;
+        values.username = currentuser.username;
+        values.address = currentuser.address;
+        values.info = currentuser.info;
+        values.dateofbirth = currentuser.dateofbirth;
+        setPhvalue(currentuser.phonenumber);
     };
 
     let handelupdateprofile = () => {
@@ -97,6 +108,40 @@ const Profile = () => {
         }).then(() => {
             setOpen(false);
         });
+    };
+
+    const onChange = (e) => {
+        e.preventDefault();
+        let files;
+        if (e.dataTransfer) {
+            files = e.dataTransfer.files;
+        } else if (e.target) {
+            files = e.target.files;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+            setImage(reader.result);
+        };
+        reader.readAsDataURL(files[0]);
+    };
+
+    const handleCropData = () => {
+        if (typeof cropperRef.current?.cropper !== "undefined") {
+            const message4 = cropperRef.current?.cropper
+                .getCroppedCanvas()
+                .toDataURL();
+            uploadString(storageRef, message4, "data_url").then((snapshot) => {
+                getDownloadURL(snapshot.ref).then((downloadURL) => {
+                    set(ref(db, "users/" + userData.uid), {
+                        ...currentuser,
+                        profile_picture: downloadURL,
+                    }).then(() => {
+                            setOpencropper(false);
+                            setImage("");
+                        });
+                });
+            });
+        }
     };
 
     return (
@@ -127,7 +172,14 @@ const Profile = () => {
                                                 <div className="profile_part_profile">
                                                     <Image
                                                         className="profile_part_profile_img"
-                                                        imgsrc={profile}
+                                                        imgsrc={item.profile_picture}
+                                                    />
+
+                                                    <BiEdit
+                                                        onClick={
+                                                            handleOpencropper
+                                                        }
+                                                        className="profile_edit_for_icon"
                                                     />
                                                 </div>
                                             </div>
@@ -346,6 +398,54 @@ const Profile = () => {
                                                 }}
                                             />
                                             Update profile
+                                        </Button>
+                                    </Typography>
+                                </Box>
+                            </Modal>
+
+                            <Modal
+                                open={opencropper}
+                                onClose={handleClosecropper}
+                                aria-labelledby="modal-modal-title"
+                                aria-describedby="modal-modal-description"
+                            >
+                                <Box sx={style}>
+                                    <Typography
+                                        id="modal-modal-title"
+                                        variant="h6"
+                                        component="h2"
+                                    >
+                                        Update Profile Picture
+                                    </Typography>
+                                    <Typography
+                                        id="modal-modal-description"
+                                        sx={{ mt: 2 }}
+                                    >
+                                        <input
+                                            type="file"
+                                            onChange={onChange}
+                                        />
+                                        <Cropper
+                                            ref={cropperRef}
+                                            style={{
+                                                height: 400,
+                                                width: "100%",
+                                            }}
+                                            zoomTo={0.5}
+                                            initialAspectRatio={1}
+                                            preview=".img-preview"
+                                            src={image}
+                                            viewMode={1}
+                                            minCropBoxHeight={10}
+                                            minCropBoxWidth={10}
+                                            background={false}
+                                            responsive={true}
+                                            autoCropArea={1}
+                                            checkOrientation={false}
+                                            guides={true}
+                                        />
+                                        <Button onClick={handleCropData}>
+                                            Upload
                                         </Button>
                                     </Typography>
                                 </Box>

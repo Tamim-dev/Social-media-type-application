@@ -181,16 +181,16 @@
 
 .project_img {
     object-fit: cover;
-    width: 300px;
-    height: 300px;
+    width: 225px;
+    height: 225px;
 }
 
-.projecthoverbox{
+.projecthoverbox {
     display: flex;
     position: relative;
 }
 
-.project_img_hover{
+.project_img_hover {
     visibility: hidden;
     opacity: 0;
     position: absolute;
@@ -204,3 +204,10 @@
     opacity: 1;
 }
 
+.profile_edit_for_icon {
+    position: absolute;
+    bottom: 13px;
+    right: 18px;
+    font-size: 26px;
+    color: #0077b5;
+}

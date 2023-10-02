@@ -27,7 +27,9 @@ const User = () => {
         onValue(ref(db, "users/"), (snapshot) => {
             let arr = [];
             snapshot.forEach((item) => {
-                arr.push({ ...item.val(), id: item.key });
+                if (userData.uid != item.key) {
+                    arr.push({ ...item.val(), id: item.key });
+                }
             });
             setUser(arr);
         });
@@ -120,9 +122,9 @@ const User = () => {
                                         variant="contained"
                                         color="success"
                                     >
-                                    <FaUserFriends
-                                    style={{ fontSize: "20px" }}
-                                />
+                                        <FaUserFriends
+                                            style={{ fontSize: "20px" }}
+                                        />
                                     </Button>
                                 ) : (
                                     <Button

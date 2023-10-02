@@ -25,6 +25,7 @@ import {
     uploadBytesResumable,
     getDownloadURL,
 } from "firebase/storage";
+import Slider from "react-slick";
 
 const style = {
     position: "absolute",
@@ -47,6 +48,8 @@ let initialvalue = {
     aboutbox: "",
 };
 
+
+
 const Profileinfomation = () => {
     const db = getDatabase();
     const storage = getStorage();
@@ -61,21 +64,16 @@ const Profileinfomation = () => {
     const [experience, setExperience] = useState([]);
     const [education, setEducation] = useState([]);
     const [project, setProject] = useState([]);
-    const [company, setCompanyname] = useState("");
-    const [position, setPosition] = useState("");
-    const [datepresent, setDatepresent] = useState("");
-    const [checkboxin, setCheckboxin] = useState("");
-    const [dateleave, setDateleave] = useState("");
-    const [aboutbox, setAboutbox] = useState("");
     let [checkbox, setCheckbox] = useState(false);
 
-    const handleOpen = () => setOpen(true);
     const handleOpenex = () => setOpenex(true);
     const handleOpenedu = () => setOpenedu(true);
     const handleClose = () => setOpen(false);
     const handleCloseex = () => setOpenex(false);
     const handleCloseexedit = () => setOpenexedit(false);
     const handleCloseedu = () => setOpenedu(false);
+
+ 
 
     useEffect(() => {
         onValue(ref(db, "about/"), (snapshot) => {
@@ -129,16 +127,47 @@ const Profileinfomation = () => {
     };
 
     let handleexedit = (item) => {
+        let cencel = "";
+        onValue(ref(db, "experience/" + item.id), (snapshot) => {
+            cencel = snapshot.val();
+        });
+        exvalues.workingat = cencel.workingat;
+        exvalues.position = cencel.position;
+        exvalues.checkbox = cencel.checkbox;
+        exvalues.datepresent = cencel.datepresent;
+        exvalues.dateleave = cencel.dateleave;
+        exvalues.aboutbox = cencel.aboutbox;
         setOpenexedit(true);
-        setCompanyname(item.workingat);
-        setPosition(item.position);
-        setDatepresent(item.datepresent);
-        setCheckboxin(item.checkbox);
-        setDateleave(item.dateleave);
-        setAboutbox(item.aboutbox);
     };
 
-    let handleExperienceedit = () => {};
+    const handleOpen = () => {
+        setOpen(true);
+        let cencel = "";
+        onValue(ref(db, "about/"), (snapshot) => {
+            snapshot.forEach((item) => {
+                if (userData.uid == item.val().aboutiid) {
+                    cencel = item.val().text;
+                }
+            });
+        });
+        setValues(cencel);
+    };
+
+    let handleExperienceedit = () => {
+        set(push(ref(db, "experience/")), {
+            experiencename: userData.displayName,
+            experiencenid: userData.uid,
+            experiencenimg: userData.photoURL,
+            workingat: exvalues.workingat,
+            position: exvalues.position,
+            datepresent: exvalues.datepresent,
+            checkbox: exvalues.checkbox,
+            dateleave: exvalues.dateleave,
+            aboutbox: exvalues.aboutbox,
+        }).then(() => {
+            setOpenexedit(false);
+        });
+    };
 
     let handleexdelete = (item) => {
         remove(ref(db, "experience/" + item.id));
@@ -199,9 +228,9 @@ const Profileinfomation = () => {
         );
     };
 
-    let handelprojectdelete=(item)=>{
-        remove(ref(db, "project/" +item.id))
-    }
+    let handelprojectdelete = (item) => {
+        remove(ref(db, "project/" + item.id));
+    };
 
     return (
         <>
@@ -217,9 +246,12 @@ const Profileinfomation = () => {
                 >
                     About <BiEdit onClick={handleOpen} className="edit_icon" />
                 </h3>
-                {about.map((item) => (
-                    <p className="about_text">{item.text}</p>
-                ))}
+                {about.map(
+                    (item) =>
+                        userData.uid == item.aboutiid && (
+                            <p className="about_text">{item.text}</p>
+                        )
+                )}
             </div>
             <div className="about_box">
                 <div
@@ -262,20 +294,29 @@ const Profileinfomation = () => {
                     style={{
                         display: "flex",
                         columnGap: "20px",
+                        rowGap:"20px",
                         marginTop: "20px",
+                        flexWrap: "wrap"
                     }}
                 >
-                    {project.map((item) => (
-                        <div className="projecthoverbox">
-                            <ModalImage
-                                small={item.photoURL}
-                                large={item.photoURL}
-                                alt="Hello World!"
-                                className="project_img"
-                            />
-                            <MdDelete onClick={()=>handelprojectdelete(item)} className="project_img_hover"/>
-                        </div>
-                    ))}
+                    {project.map(
+                        (item) =>
+                            userData.uid == item.projectwonerid && (
+                                <div className="projecthoverbox">
+                                    <ModalImage
+                                        small={item.photoURL}
+                                        large={item.photoURL}
+                                        className="project_img"
+                                    />
+                                    <MdDelete
+                                        onClick={() =>
+                                            handelprojectdelete(item)
+                                        }
+                                        className="project_img_hover"
+                                    />
+                                </div>
+                            )
+                    )}
                 </div>
             </div>
             <div className="about_box">
@@ -303,40 +344,47 @@ const Profileinfomation = () => {
                         Add experience
                     </p>
                 </div>
-                {experience.map((item) => (
-                    <div className="experience_box">
-                        <Image className="experience_img" imgsrc={p1} />
-                        <div>
-                            <h4 className="experience_icon">
-                                {item.workingat}
-                                <span>
-                                    <BiEdit
-                                        onClick={() => handleexedit(item)}
-                                        className="edit_icon"
-                                    />
-                                    <MdDelete
-                                        onClick={() => handleexdelete(item)}
-                                        className="edit_icon"
-                                    />
-                                </span>
-                            </h4>
-                            <p>{item.position}</p>
-                            <p
-                                style={{
-                                    fontWeight: "300",
-                                    marginTop: "5px",
-                                    marginBottom: "10px",
-                                }}
-                            >
-                                {item.datepresent}{" "}
-                                {item.checkbox == "on"
-                                    ? " — Present"
-                                    : ` to ${item.dateleave}`}
-                            </p>
-                            <p>{item.aboutbox}</p>
-                        </div>
-                    </div>
-                ))}
+                {experience.map(
+                    (item) =>
+                        userData.uid == item.experiencenid && (
+                            <div className="experience_box">
+                                <Image className="experience_img" imgsrc={p1} />
+                                <div>
+                                    <h4 className="experience_icon">
+                                        {item.workingat}
+                                        <span>
+                                            <BiEdit
+                                                onClick={() =>
+                                                    handleexedit(item)
+                                                }
+                                                className="edit_icon"
+                                            />
+                                            <MdDelete
+                                                onClick={() =>
+                                                    handleexdelete(item)
+                                                }
+                                                className="edit_icon"
+                                            />
+                                        </span>
+                                    </h4>
+                                    <p>{item.position}</p>
+                                    <p
+                                        style={{
+                                            fontWeight: "300",
+                                            marginTop: "5px",
+                                            marginBottom: "10px",
+                                        }}
+                                    >
+                                        {item.datepresent}{" "}
+                                        {item.checkbox == "on"
+                                            ? " — Present"
+                                            : ` to ${item.dateleave}`}
+                                    </p>
+                                    <p>{item.aboutbox}</p>
+                                </div>
+                            </div>
+                        )
+                )}
             </div>
             <div className="about_box">
                 <div
@@ -364,41 +412,49 @@ const Profileinfomation = () => {
                     </p>
                 </div>
                 <div>
-                    {education.map((item) => (
-                        <div className="experience_box">
-                            <Image className="experience_img" imgsrc={p3} />
-                            <div>
-                                <h4
-                                    style={{
-                                        marginBottom: "10px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                    }}
-                                >
-                                    {item.University}
-                                    <BiEdit className="edit_icon" />
-                                    <MdDelete
-                                        onClick={() => handleedudelete(item)}
-                                        className="edit_icon"
+                    {education.map(
+                        (item) =>
+                            userData.uid == item.educationid && (
+                                <div className="experience_box">
+                                    <Image
+                                        className="experience_img"
+                                        imgsrc={p3}
                                     />
-                                </h4>
-                                <p>{item.Class}</p>
-                                <p
-                                    style={{
-                                        fontWeight: "300",
-                                        marginTop: "5px",
-                                        marginBottom: "10px",
-                                    }}
-                                >
-                                    {item.started}{" "}
-                                    {item.checkbox == "on"
-                                        ? " — Present"
-                                        : ` to ${item.graduation}`}
-                                </p>
-                                <p>{item.aboutbox}</p>
-                            </div>
-                        </div>
-                    ))}
+                                    <div>
+                                        <h4
+                                            style={{
+                                                marginBottom: "10px",
+                                                display: "flex",
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            {item.University}
+                                            <BiEdit className="edit_icon" />
+                                            <MdDelete
+                                                onClick={() =>
+                                                    handleedudelete(item)
+                                                }
+                                                className="edit_icon"
+                                            />
+                                        </h4>
+                                        <p>{item.Class}</p>
+                                        <p
+                                            style={{
+                                                fontWeight: "300",
+                                                marginTop: "5px",
+                                                marginBottom: "10px",
+                                            }}
+                                        >
+                                            {item.started}{" "}
+                                            {item.checkbox == "on"
+                                                ? " — Present"
+                                                : ` to ${item.graduation}`}
+                                        </p>
+                                        <p>{item.aboutbox}</p>
+                                    </div>
+                                </div>
+                            )
+                    )}
                 </div>
             </div>
 
@@ -426,6 +482,7 @@ const Profileinfomation = () => {
                                 fontSize: "20px",
                                 height: "100px",
                             }}
+                            value={values}
                         />
                     </Typography>
                     <Button onClick={handleaboutsubmit} variant="contained">
@@ -530,7 +587,7 @@ const Profileinfomation = () => {
                         variant="h6"
                         component="h2"
                     >
-                        Experience
+                        Edit Experience
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         <h3>Company name / Working at</h3>
@@ -539,7 +596,7 @@ const Profileinfomation = () => {
                             name="workingat"
                             className="input_experience"
                             placeholder="Company name / Working at"
-                            value={company}
+                            value={exvalues.workingat}
                         />
                         <h3>position</h3>
                         <input
@@ -547,7 +604,7 @@ const Profileinfomation = () => {
                             name="position"
                             className="input2nd_experience"
                             placeholder="position"
-                            value={position}
+                            value={exvalues.position}
                         />
                         <div>
                             <h3>started</h3>
@@ -556,7 +613,7 @@ const Profileinfomation = () => {
                                 name="datepresent"
                                 className="inputdate_experience"
                                 type="date"
-                                value={datepresent}
+                                value={exvalues.datepresent}
                             />
                             <div style={{ display: "inline-block" }}>
                                 <h3 style={{ display: "inline-block" }}>
@@ -565,8 +622,8 @@ const Profileinfomation = () => {
                                 <Checkbox
                                     onChange={handlechange}
                                     name="checkbox"
+                                    value={exvalues.checkbox}
                                     onClick={() => setCheckbox(!checkbox)}
-                                    value={checkboxin}
                                 />
                             </div>
                             <h3>Leave</h3>
@@ -575,19 +632,19 @@ const Profileinfomation = () => {
                                 name="dateleave"
                                 className="inputdate_experience"
                                 type="date"
-                                value={dateleave}
+                                value={exvalues.dateleave}
                             />
                             <h3>About</h3>
                             <textarea
                                 onChange={handlechange}
                                 name="aboutbox"
-                                value={aboutbox}
                                 style={{
                                     width: "100%",
                                     fontSize: "20px",
                                     height: "80px",
                                     margin: "10px 0px",
                                 }}
+                                value={exvalues.aboutbox}
                             />
                         </div>
                     </Typography>
