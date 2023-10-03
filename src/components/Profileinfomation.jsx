@@ -48,6 +48,15 @@ let initialvalue = {
     aboutbox: "",
 };
 
+let initialeduvalue = {
+    Class: "",
+    University: "",
+    started: "",
+    checkbox: "",
+    graduation: "",
+    aboutbox: "",
+};
+
 const Profileinfomation = () => {
     const db = getDatabase();
     const storage = getStorage();
@@ -56,20 +65,24 @@ const Profileinfomation = () => {
     const [openex, setOpenex] = useState(false);
     const [openedu, setOpenedu] = useState(false);
     const [openexedit, setOpenexedit] = useState(false);
+    const [openeduedit, setOpeneduedit] = useState(false);
     const [values, setValues] = useState("");
     const [exvalues, setExvalues] = useState(initialvalue);
+    const [eduvalues, setEduvalues] = useState(initialeduvalue);
     const [about, setAbout] = useState([]);
     const [experience, setExperience] = useState([]);
     const [education, setEducation] = useState([]);
     const [project, setProject] = useState([]);
     let [checkbox, setCheckbox] = useState(false);
     let [exid, setExid] = useState("");
+    let [eduid, setEduid] = useState("");
 
     const handleOpenex = () => setOpenex(true);
     const handleOpenedu = () => setOpenedu(true);
     const handleClose = () => setOpen(false);
     const handleCloseex = () => setOpenex(false);
     const handleCloseexedit = () => setOpenexedit(false);
+    const handleCloseeduedit = () => setOpeneduedit(false);
     const handleCloseedu = () => setOpenedu(false);
 
     useEffect(() => {
@@ -112,6 +125,13 @@ const Profileinfomation = () => {
             [e.target.name]: e.target.value,
         });
     };
+    let handlechanges = (e) => {
+        setEduvalues({
+            ...eduvalues,
+            [e.target.name]: e.target.value,
+        });
+        console.log(eduvaluee);
+    };
 
     let handleaboutsubmit = () => {
         set(ref(db, "about/" + userData.uid), {
@@ -135,8 +155,10 @@ const Profileinfomation = () => {
         });
         setValues(cencel);
     };
-    
-    {/*Experience*/}
+
+    {
+        /*Experience*/
+    }
     let handleExperienceedit = () => {
         set(ref(db, "experience/" + exid), {
             experiencename: userData.displayName,
@@ -204,30 +226,87 @@ const Profileinfomation = () => {
     let handleexdelete = (item) => {
         remove(ref(db, "experience/" + item.id));
     };
-    {/*Experience*/}
+    {
+        /*Experience*/
+    }
 
-    {/*Education*/}
+    {
+        /*Education*/
+    }
     let handleEducation = () => {
         set(push(ref(db, "education/")), {
             educationname: userData.displayName,
             educationid: userData.uid,
             educationimg: userData.photoURL,
-            University: exvalues.workingat,
-            Class: exvalues.position,
-            started: exvalues.datepresent,
-            checkbox: exvalues.checkbox,
-            graduation: exvalues.dateleave,
-            aboutbox: exvalues.aboutbox,
+            University: eduvalues.University,
+            Class: eduvalues.Class,
+            started: eduvalues.started,
+            checkbox: checkbox,
+            graduation: eduvalues.graduation,
+            aboutbox: eduvalues.aboutbox,
         }).then(() => {
+            setCheckbox(false);
             setOpenedu(false);
+            setEduvalues({
+                ...eduvalues,
+                Class: "",
+                University: "",
+                started: "",
+                checkbox: "",
+                graduation: "",
+                aboutbox: "",
+            });
+        });
+    };
+    let handleeduedit = (item) => {
+        let cencel = "";
+        onValue(ref(db, "education/" + item.id), (snapshot) => {
+            cencel = snapshot.val();
+        });
+        eduvalues.Class = cencel.Class;
+        eduvalues.University = cencel.University;
+        eduvalues.checkbox = cencel.checkbox;
+        eduvalues.started = cencel.started;
+        eduvalues.graduation = cencel.graduation;
+        eduvalues.aboutbox = cencel.aboutbox;
+        setEduid(item.id);
+        setOpeneduedit(true);
+    };
+    let handleEducationeditupdate = () => {
+        set(ref(db, "education/" + eduid), {
+            educationname: userData.displayName,
+            educationid: userData.uid,
+            educationimg: userData.photoURL,
+            Class: eduvalues.Class,
+            University: eduvalues.University,
+            started: eduvalues.started,
+            checkbox: checkbox,
+            graduation: eduvalues.graduation,
+            aboutbox: eduvalues.aboutbox,
+        }).then(() => {
+            setCheckbox(false);
+            setOpeneduedit(false);
+            setEduvalues({
+                ...eduvalues,
+                Class: "",
+                University: "",
+                started: "",
+                checkbox: "",
+                graduation: "",
+                aboutbox: "",
+            });
         });
     };
     let handleedudelete = (item) => {
         remove(ref(db, "education/" + item.id));
     };
-    {/*Education*/}
-    
-    {/*Project*/}
+    {
+        /*Education*/
+    }
+
+    {
+        /*Project*/
+    }
     let handelproject = (e) => {
         const storageRef = imgref(storage, `${e.target.files[0].name}`);
         const uploadTask = uploadBytesResumable(storageRef, e.target.files[0]);
@@ -249,7 +328,9 @@ const Profileinfomation = () => {
     let handelprojectdelete = (item) => {
         remove(ref(db, "project/" + item.id));
     };
-    {/*Project*/}
+    {
+        /*Project*/
+    }
 
     return (
         <>
@@ -440,7 +521,12 @@ const Profileinfomation = () => {
                                             }}
                                         >
                                             {item.University}
-                                            <BiEdit className="edit_icon" />
+                                            <BiEdit
+                                                className="edit_icon"
+                                                onClick={() =>
+                                                    handleeduedit(item)
+                                                }
+                                            />
                                             <MdDelete
                                                 onClick={() =>
                                                     handleedudelete(item)
@@ -470,7 +556,6 @@ const Profileinfomation = () => {
             </div>
 
             {/*model about*/}
-
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -501,11 +586,9 @@ const Profileinfomation = () => {
                     </Button>
                 </Box>
             </Modal>
-
             {/*model about*/}
 
             {/*model Experience*/}
-            {/*================*/}
             <Modal
                 open={openexedit}
                 onClose={handleCloseexedit}
@@ -601,7 +684,6 @@ const Profileinfomation = () => {
                     </Button>
                 </Box>
             </Modal>
-            {/*================*/}
             <Modal
                 open={openex}
                 onClose={handleCloseex}
@@ -683,7 +765,6 @@ const Profileinfomation = () => {
                     </Button>
                 </Box>
             </Modal>
-
             {/*model Experience*/}
 
             {/*model Education*/}
@@ -704,23 +785,23 @@ const Profileinfomation = () => {
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         <h3>University / College name</h3>
                         <input
-                            onChange={handlechange}
-                            name="workingat"
+                            onChange={handlechanges}
+                            name="University"
                             className="input_experience"
                             placeholder="University / College name"
                         />
                         <h3>Class / Subject</h3>
                         <input
-                            onChange={handlechange}
-                            name="position"
+                            onChange={handlechanges}
+                            name="Class"
                             className="input2nd_experience"
                             placeholder="Class / Subject"
                         />
                         <div>
                             <h3>started</h3>
                             <input
-                                onChange={handlechange}
-                                name="datepresent"
+                                onChange={handlechanges}
+                                name="started"
                                 className="inputdate_experience"
                                 type="date"
                             />
@@ -729,21 +810,21 @@ const Profileinfomation = () => {
                                     Present
                                 </h3>
                                 <Checkbox
-                                    onChange={handlechange}
+                                    onChange={handlechanges}
                                     name="checkbox"
                                     onClick={() => setCheckbox(!checkbox)}
                                 />
                             </div>
                             <h3>Year of graduation</h3>
                             <input
-                                onChange={handlechange}
-                                name="dateleave"
+                                onChange={handlechanges}
+                                name="graduation"
                                 className="inputdate_experience"
                                 type="date"
                             />
                             <h3>About</h3>
                             <textarea
-                                onChange={handlechange}
+                                onChange={handlechanges}
                                 name="aboutbox"
                                 style={{
                                     width: "100%",
@@ -761,6 +842,93 @@ const Profileinfomation = () => {
                             fontSize: "24px",
                         }}
                         onClick={handleEducation}
+                        size="large"
+                        variant="contained"
+                    >
+                        <MdDownloadDone />
+                    </Button>
+                </Box>
+            </Modal>
+            <Modal
+                open={openeduedit}
+                onClose={handleCloseeduedit}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h2"
+                    >
+                        Edit Education
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        <h3>University / College name</h3>
+                        <input
+                            onChange={handlechanges}
+                            name="University"
+                            className="input_experience"
+                            placeholder="University / College name"
+                            value={eduvalues.University}
+                        />
+                        <h3>Class / Subject</h3>
+                        <input
+                            onChange={handlechanges}
+                            name="Class"
+                            className="input2nd_experience"
+                            placeholder="Class / Subject"
+                            value={eduvalues.Class}
+                        />
+                        <div>
+                            <h3>started</h3>
+                            <input
+                                onChange={handlechanges}
+                                name="started"
+                                className="inputdate_experience"
+                                type="date"
+                                value={eduvalues.started}
+                            />
+                            <div style={{ display: "inline-block" }}>
+                                <h3 style={{ display: "inline-block" }}>
+                                    Present
+                                </h3>
+                                <Checkbox
+                                    onChange={handlechanges}
+                                    name="checkbox"
+                                    onClick={() => setCheckbox(!checkbox)}
+                                    value={eduvalues.checkbox}
+                                />
+                            </div>
+                            <h3>Year of graduation</h3>
+                            <input
+                                onChange={handlechanges}
+                                name="graduation"
+                                className="inputdate_experience"
+                                type="date"
+                                value={eduvalues.graduation}
+                            />
+                            <h3>About</h3>
+                            <textarea
+                                onChange={handlechanges}
+                                name="aboutbox"
+                                style={{
+                                    width: "100%",
+                                    fontSize: "20px",
+                                    height: "80px",
+                                    margin: "10px 0px",
+                                }}
+                                value={eduvalues.aboutbox}
+                            />
+                        </div>
+                    </Typography>
+                    <Button
+                        style={{
+                            width: "100%",
+                            padding: "15px",
+                            fontSize: "24px",
+                        }}
+                        onClick={handleEducationeditupdate}
                         size="large"
                         variant="contained"
                     >
