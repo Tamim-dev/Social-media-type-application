@@ -45,7 +45,7 @@ const Rotlayout = () => {
                             <div className="rotlayout_profile_box">
                                 <Image
                                     className="rotlayout_profile_img"
-                                    imgsrc={profile}
+                                    imgsrc={userData.photoURL}
                                 />
                                 <h2
                                     style={{

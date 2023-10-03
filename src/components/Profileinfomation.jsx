@@ -267,14 +267,6 @@ const Profileinfomation = () => {
                         >
                             Projects
                         </h3>
-                        <p
-                            style={{
-                                display: "inline-block",
-                                marginLeft: "20px",
-                            }}
-                        >
-                            3 of 12
-                        </p>
                     </div>
                     <label>
                         <input type="file" hidden onChange={handelproject} />

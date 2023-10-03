@@ -5,7 +5,7 @@ import Container from "../../Container";
 import Image from "../../Image";
 import profile from "../../../assets/profile.jpeg";
 import cover from "../../../assets/cover.png";
-import { getDatabase, ref , set, onValue } from "firebase/database";
+import { getDatabase, ref, set, onValue } from "firebase/database";
 import { FaLocationArrow } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import { Outlet, useLocation, Link } from "react-router-dom";
@@ -13,7 +13,8 @@ import Profileinfomation from "../../Profileinfomation";
 import { SiGooglenews } from "react-icons/si";
 import { BiEdit } from "react-icons/bi";
 import User from "../../user/User";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { userdata } from "../../features/users/userSlice";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
@@ -21,7 +22,12 @@ import TextField from "@mui/material/TextField";
 import { MuiTelInput } from "mui-tel-input";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
-import { getStorage, ref as imgref, uploadString,getDownloadURL } from "firebase/storage";
+import {
+    getStorage,
+    ref as imgref,
+    uploadString,
+    getDownloadURL,
+} from "firebase/storage";
 
 const style = {
     position: "absolute",
@@ -46,6 +52,7 @@ let initialvalue = {
 const Profile = () => {
     const db = getDatabase();
     const storage = getStorage();
+    const dispatch = useDispatch();
     let userData = useSelector((state) => state.loginuser.loginuser);
     let location = useLocation();
     const [open, setOpen] = useState(false);
@@ -58,10 +65,14 @@ const Profile = () => {
     let [currentuser, setCurrentuser] = useState([]);
     let [values, setValues] = useState(initialvalue);
     const [opencropper, setOpencropper] = useState(false);
+    const [opencroppercover, setOpencroppercover] = useState(false);
     const handleOpencropper = () => setOpencropper(true);
     const handleClosecropper = () => setOpencropper(false);
+    const handleOpencroppercover = () => setOpencroppercover(true);
+    const handleClosecroppercover = () => setOpencroppercover(false);
 
     const [image, setImage] = useState(userData.photoURL);
+    const [imagecover, setImagecover] = useState(userData.cover_picture);
     const cropperRef = createRef();
     const storageRef = imgref(storage, "some-child");
 
@@ -134,10 +145,73 @@ const Profile = () => {
                 getDownloadURL(snapshot.ref).then((downloadURL) => {
                     set(ref(db, "users/" + userData.uid), {
                         ...currentuser,
-                        profile_picture: downloadURL,
-                    }).then(() => {
+                        photoURL: downloadURL,
+                    })
+                        .then(() => {
+                            localStorage.setItem(
+                                "user",
+                                JSON.stringify({
+                                    ...userData,
+                                    photoURL: downloadURL,
+                                })
+                            );
+                            dispatch(
+                                userdata({ ...userData, photoURL: downloadURL })
+                            );
+                        })
+                        .then(() => {
                             setOpencropper(false);
                             setImage("");
+                        });
+                });
+            });
+        }
+    };
+
+    const onChangecover = (e) => {
+        e.preventDefault();
+        let files;
+        if (e.dataTransfer) {
+            files = e.dataTransfer.files;
+        } else if (e.target) {
+            files = e.target.files;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+            setImagecover(reader.result);
+        };
+        reader.readAsDataURL(files[0]);
+    };
+
+    const handleCropDatacover = () => {
+        if (typeof cropperRef.current?.cropper !== "undefined") {
+            const message4 = cropperRef.current?.cropper
+                .getCroppedCanvas()
+                .toDataURL();
+            uploadString(storageRef, message4, "data_url").then((snapshot) => {
+                getDownloadURL(snapshot.ref).then((downloadURL) => {
+                    set(ref(db, "users/" + userData.uid), {
+                        ...currentuser,
+                        cover_picture: downloadURL,
+                    })
+                        .then(() => {
+                            localStorage.setItem(
+                                "user",
+                                JSON.stringify({
+                                    ...userData,
+                                    cover_picture: downloadURL,
+                                })
+                            );
+                            dispatch(
+                                userdata({
+                                    ...userData,
+                                    cover_picture: downloadURL,
+                                })
+                            );
+                        })
+                        .then(() => {
+                            setOpencroppercover(false);
+                            setImagecover("");
                         });
                 });
             });
@@ -158,21 +232,21 @@ const Profile = () => {
                                                 <div className="profile_part_cover">
                                                     <Image
                                                         className="profile_part_cover_img"
-                                                        imgsrc={cover}
+                                                        imgsrc={
+                                                            item.cover_picture
+                                                        }
                                                     />
-                                                    <Button
-                                                        className="proflie_edit_btn"
-                                                        variant="contained"
-                                                        onClick={handleOpen}
-                                                    >
-                                                        <BiEdit />
-                                                        Edit profile
-                                                    </Button>
+                                                    <BiEdit
+                                                        onClick={
+                                                            handleOpencroppercover
+                                                        }
+                                                        className="proflie_edit_btn_cover"
+                                                    />
                                                 </div>
                                                 <div className="profile_part_profile">
                                                     <Image
                                                         className="profile_part_profile_img"
-                                                        imgsrc={item.profile_picture}
+                                                        imgsrc={item.photoURL}
                                                     />
 
                                                     <BiEdit
@@ -199,18 +273,31 @@ const Profile = () => {
                                                     >
                                                         {item.username}
                                                     </h2>
-                                                    <p>
-                                                        <FaLocationArrow
-                                                            style={{
-                                                                color: "#0275B1",
-                                                                fontSize:
-                                                                    "14px",
-                                                                marginRight:
-                                                                    "10px",
-                                                            }}
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            columnGap: "20px",
+                                                        }}
+                                                    >
+                                                        <p>
+                                                            <FaLocationArrow
+                                                                style={{
+                                                                    color: "#0275B1",
+                                                                    fontSize:
+                                                                        "14px",
+                                                                    marginRight:
+                                                                        "10px",
+                                                                }}
+                                                            />
+                                                            {item.address}
+                                                        </p>
+                                                        <BiEdit
+                                                            onClick={handleOpen}
+                                                            className="proflie_edit_btn"
                                                         />
-                                                        {item.address}
-                                                    </p>
+                                                    </div>
                                                 </div>
                                                 <p
                                                     style={{
@@ -421,6 +508,9 @@ const Profile = () => {
                                         id="modal-modal-description"
                                         sx={{ mt: 2 }}
                                     >
+                                        <div className="imgbox">
+                                            <div className="img-preview"></div>
+                                        </div>
                                         <input
                                             type="file"
                                             onChange={onChange}
@@ -445,6 +535,56 @@ const Profile = () => {
                                             guides={true}
                                         />
                                         <Button onClick={handleCropData}>
+                                            Upload
+                                        </Button>
+                                    </Typography>
+                                </Box>
+                            </Modal>
+                            <Modal
+                                open={opencroppercover}
+                                onClose={handleClosecroppercover}
+                                aria-labelledby="modal-modal-title"
+                                aria-describedby="modal-modal-description"
+                            >
+                                <Box sx={style}>
+                                    <Typography
+                                        id="modal-modal-title"
+                                        variant="h6"
+                                        component="h2"
+                                    >
+                                        Update Profile Picture
+                                    </Typography>
+                                    <Typography
+                                        id="modal-modal-description"
+                                        sx={{ mt: 2 }}
+                                    >
+                                        <div className="imgboxcover">
+                                            <div className="img-previewcover"></div>
+                                        </div>
+                                        <input
+                                            type="file"
+                                            onChange={onChangecover}
+                                        />
+                                        <Cropper
+                                            ref={cropperRef}
+                                            style={{
+                                                height: 400,
+                                                width: "100%",
+                                            }}
+                                            zoomTo={0.5}
+                                            initialAspectRatio={1}
+                                            preview=".img-previewcover"
+                                            src={imagecover}
+                                            viewMode={1}
+                                            minCropBoxWidth={510}
+                                            minCropBoxHeight={110}
+                                            background={false}
+                                            responsive={true}
+                                            autoCropArea={1}
+                                            checkOrientation={false}
+                                            guides={true}
+                                        />
+                                        <Button onClick={handleCropDatacover}>
                                             Upload
                                         </Button>
                                     </Typography>

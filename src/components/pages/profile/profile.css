@@ -13,6 +13,20 @@
 .profile_part_cover_img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
+}
+
+.proflie_edit_btn_cover{
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    right: 20px;
+    top: 20px;
+    font-size: 26px;
+    color: #0077b5;
+    background: #ffffff;
+    border-radius: 50%;
+    padding: 10px;
 }
 
 .profile_img_box {
@@ -166,11 +180,10 @@
 }
 
 .proflie_edit_btn {
-    position: absolute !important;
-    top: 20px !important;
-    right: 20px !important;
-    background: white !important;
-    color: #262626 !important;
+    color: #0077b5 !important;
+    font-size: 24px;
+    right: -25px ;
+    position: relative;
 }
 
 .Contact_info_box {
@@ -206,8 +219,36 @@
 
 .profile_edit_for_icon {
     position: absolute;
+    width: 30px;
+    height: 30px;
     bottom: 13px;
-    right: 18px;
+    right: 13px;
     font-size: 26px;
     color: #0077b5;
+    background: #ffffff;
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.imgbox{
+    overflow: hidden;
+    border-radius: 50% !important;
+    width: 100px !important;
+    height: 100px !important;
+}
+
+.imgboxcover{
+    overflow: hidden;
+    width: 510px !important;
+    height: 110px !important;
+}
+.img-preview{
+    border-radius: 50% !important;
+    width: 100px !important;
+    height: 100px !important;
+}
+.img-previewcover{
+    overflow: hidden;
+    width: 510px !important;
+    height: 110px !important;
 }

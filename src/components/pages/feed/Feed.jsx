@@ -160,7 +160,7 @@ const Feed = () => {
                                 />
                                 <Image
                                     className="feed_profile_profile"
-                                    imgsrc={profile}
+                                    imgsrc={userData.photoURL}
                                 />
                                 <h3
                                     style={{
