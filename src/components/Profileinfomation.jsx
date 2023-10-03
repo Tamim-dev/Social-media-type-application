@@ -48,8 +48,6 @@ let initialvalue = {
     aboutbox: "",
 };
 
-
-
 const Profileinfomation = () => {
     const db = getDatabase();
     const storage = getStorage();
@@ -65,6 +63,7 @@ const Profileinfomation = () => {
     const [education, setEducation] = useState([]);
     const [project, setProject] = useState([]);
     let [checkbox, setCheckbox] = useState(false);
+    let [exid, setExid] = useState("");
 
     const handleOpenex = () => setOpenex(true);
     const handleOpenedu = () => setOpenedu(true);
@@ -72,8 +71,6 @@ const Profileinfomation = () => {
     const handleCloseex = () => setOpenex(false);
     const handleCloseexedit = () => setOpenexedit(false);
     const handleCloseedu = () => setOpenedu(false);
-
- 
 
     useEffect(() => {
         onValue(ref(db, "about/"), (snapshot) => {
@@ -126,20 +123,6 @@ const Profileinfomation = () => {
         });
     };
 
-    let handleexedit = (item) => {
-        let cencel = "";
-        onValue(ref(db, "experience/" + item.id), (snapshot) => {
-            cencel = snapshot.val();
-        });
-        exvalues.workingat = cencel.workingat;
-        exvalues.position = cencel.position;
-        exvalues.checkbox = cencel.checkbox;
-        exvalues.datepresent = cencel.datepresent;
-        exvalues.dateleave = cencel.dateleave;
-        exvalues.aboutbox = cencel.aboutbox;
-        setOpenexedit(true);
-    };
-
     const handleOpen = () => {
         setOpen(true);
         let cencel = "";
@@ -152,31 +135,33 @@ const Profileinfomation = () => {
         });
         setValues(cencel);
     };
-
+    
+    {/*Experience*/}
     let handleExperienceedit = () => {
-        set(push(ref(db, "experience/")), {
+        set(ref(db, "experience/" + exid), {
             experiencename: userData.displayName,
             experiencenid: userData.uid,
             experiencenimg: userData.photoURL,
             workingat: exvalues.workingat,
             position: exvalues.position,
             datepresent: exvalues.datepresent,
-            checkbox: exvalues.checkbox,
+            checkbox: checkbox,
             dateleave: exvalues.dateleave,
             aboutbox: exvalues.aboutbox,
         }).then(() => {
+            setCheckbox(false);
             setOpenexedit(false);
+            setExvalues({
+                ...exvalues,
+                workingat: "",
+                position: "",
+                datepresent: "",
+                checkbox: "",
+                dateleave: "",
+                aboutbox: "",
+            });
         });
     };
-
-    let handleexdelete = (item) => {
-        remove(ref(db, "experience/" + item.id));
-    };
-
-    let handleedudelete = (item) => {
-        remove(ref(db, "education/" + item.id));
-    };
-
     let handleExperience = () => {
         set(push(ref(db, "experience/")), {
             experiencename: userData.displayName,
@@ -185,14 +170,43 @@ const Profileinfomation = () => {
             workingat: exvalues.workingat,
             position: exvalues.position,
             datepresent: exvalues.datepresent,
-            checkbox: exvalues.checkbox,
+            checkbox: checkbox,
             dateleave: exvalues.dateleave,
             aboutbox: exvalues.aboutbox,
         }).then(() => {
+            setCheckbox(false);
             setOpenex(false);
+            setExvalues({
+                ...exvalues,
+                workingat: "",
+                position: "",
+                datepresent: "",
+                checkbox: "",
+                dateleave: "",
+                aboutbox: "",
+            });
         });
     };
+    let handleexedit = (item) => {
+        let cencel = "";
+        onValue(ref(db, "experience/" + item.id), (snapshot) => {
+            cencel = snapshot.val();
+        });
+        exvalues.workingat = cencel.workingat;
+        exvalues.position = cencel.position;
+        exvalues.checkbox = cencel.checkbox;
+        exvalues.datepresent = cencel.datepresent;
+        exvalues.dateleave = cencel.dateleave;
+        exvalues.aboutbox = cencel.aboutbox;
+        setExid(item.id);
+        setOpenexedit(true);
+    };
+    let handleexdelete = (item) => {
+        remove(ref(db, "experience/" + item.id));
+    };
+    {/*Experience*/}
 
+    {/*Education*/}
     let handleEducation = () => {
         set(push(ref(db, "education/")), {
             educationname: userData.displayName,
@@ -208,7 +222,12 @@ const Profileinfomation = () => {
             setOpenedu(false);
         });
     };
-
+    let handleedudelete = (item) => {
+        remove(ref(db, "education/" + item.id));
+    };
+    {/*Education*/}
+    
+    {/*Project*/}
     let handelproject = (e) => {
         const storageRef = imgref(storage, `${e.target.files[0].name}`);
         const uploadTask = uploadBytesResumable(storageRef, e.target.files[0]);
@@ -227,10 +246,10 @@ const Profileinfomation = () => {
             }
         );
     };
-
     let handelprojectdelete = (item) => {
         remove(ref(db, "project/" + item.id));
     };
+    {/*Project*/}
 
     return (
         <>
@@ -286,9 +305,9 @@ const Profileinfomation = () => {
                     style={{
                         display: "flex",
                         columnGap: "20px",
-                        rowGap:"20px",
+                        rowGap: "20px",
                         marginTop: "20px",
-                        flexWrap: "wrap"
+                        flexWrap: "wrap",
                     }}
                 >
                     {project.map(
@@ -368,7 +387,7 @@ const Profileinfomation = () => {
                                         }}
                                     >
                                         {item.datepresent}{" "}
-                                        {item.checkbox == "on"
+                                        {item.checkbox == true
                                             ? " — Present"
                                             : ` to ${item.dateleave}`}
                                     </p>
@@ -438,7 +457,7 @@ const Profileinfomation = () => {
                                             }}
                                         >
                                             {item.started}{" "}
-                                            {item.checkbox == "on"
+                                            {item.checkbox == true
                                                 ? " — Present"
                                                 : ` to ${item.graduation}`}
                                         </p>
@@ -486,6 +505,103 @@ const Profileinfomation = () => {
             {/*model about*/}
 
             {/*model Experience*/}
+            {/*================*/}
+            <Modal
+                open={openexedit}
+                onClose={handleCloseexedit}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h2"
+                    >
+                        Edit Experience
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        <h3>Company name / Working at</h3>
+                        <input
+                            onChange={handlechange}
+                            name="workingat"
+                            className="input_experience"
+                            placeholder="Company name / Working at"
+                            value={exvalues.workingat}
+                        />
+                        <h3>position</h3>
+                        <input
+                            onChange={handlechange}
+                            name="position"
+                            className="input2nd_experience"
+                            placeholder="position"
+                            value={exvalues.position}
+                        />
+                        <div>
+                            <h3>started</h3>
+                            <input
+                                onChange={handlechange}
+                                name="datepresent"
+                                className="inputdate_experience"
+                                type="date"
+                                value={exvalues.datepresent}
+                            />
+                            <div
+                                style={{
+                                    display: "inline-block",
+                                }}
+                            >
+                                <h3
+                                    style={{
+                                        display: "inline-block",
+                                    }}
+                                >
+                                    Present
+                                </h3>
+                                <Checkbox
+                                    onChange={handlechange}
+                                    name="checkbox"
+                                    value={exvalues.checkbox}
+                                    onClick={() => setCheckbox(!checkbox)}
+                                />
+                            </div>
+                            <h3>Leave</h3>
+                            <input
+                                onChange={handlechange}
+                                name="dateleave"
+                                className="inputdate_experience"
+                                type="date"
+                                value={exvalues.dateleave}
+                            />
+                            <h3>About</h3>
+                            <textarea
+                                onChange={handlechange}
+                                name="aboutbox"
+                                style={{
+                                    width: "100%",
+                                    fontSize: "20px",
+                                    height: "80px",
+                                    margin: "10px 0px",
+                                }}
+                                value={exvalues.aboutbox}
+                            />
+                        </div>
+                    </Typography>
+                    <Button
+                        style={{
+                            width: "100%",
+                            padding: "15px",
+                            fontSize: "24px",
+                        }}
+                        onClick={handleExperienceedit}
+                        size="large"
+                        variant="contained"
+                    >
+                        <MdDownloadDone />
+                    </Button>
+                </Box>
+            </Modal>
+            {/*================*/}
             <Modal
                 open={openex}
                 onClose={handleCloseex}
@@ -567,93 +683,7 @@ const Profileinfomation = () => {
                     </Button>
                 </Box>
             </Modal>
-            <Modal
-                open={openexedit}
-                onClose={handleCloseexedit}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <Typography
-                        id="modal-modal-title"
-                        variant="h6"
-                        component="h2"
-                    >
-                        Edit Experience
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        <h3>Company name / Working at</h3>
-                        <input
-                            onChange={handlechange}
-                            name="workingat"
-                            className="input_experience"
-                            placeholder="Company name / Working at"
-                            value={exvalues.workingat}
-                        />
-                        <h3>position</h3>
-                        <input
-                            onChange={handlechange}
-                            name="position"
-                            className="input2nd_experience"
-                            placeholder="position"
-                            value={exvalues.position}
-                        />
-                        <div>
-                            <h3>started</h3>
-                            <input
-                                onChange={handlechange}
-                                name="datepresent"
-                                className="inputdate_experience"
-                                type="date"
-                                value={exvalues.datepresent}
-                            />
-                            <div style={{ display: "inline-block" }}>
-                                <h3 style={{ display: "inline-block" }}>
-                                    Present
-                                </h3>
-                                <Checkbox
-                                    onChange={handlechange}
-                                    name="checkbox"
-                                    value={exvalues.checkbox}
-                                    onClick={() => setCheckbox(!checkbox)}
-                                />
-                            </div>
-                            <h3>Leave</h3>
-                            <input
-                                onChange={handlechange}
-                                name="dateleave"
-                                className="inputdate_experience"
-                                type="date"
-                                value={exvalues.dateleave}
-                            />
-                            <h3>About</h3>
-                            <textarea
-                                onChange={handlechange}
-                                name="aboutbox"
-                                style={{
-                                    width: "100%",
-                                    fontSize: "20px",
-                                    height: "80px",
-                                    margin: "10px 0px",
-                                }}
-                                value={exvalues.aboutbox}
-                            />
-                        </div>
-                    </Typography>
-                    <Button
-                        style={{
-                            width: "100%",
-                            padding: "15px",
-                            fontSize: "24px",
-                        }}
-                        onClick={handleExperienceedit}
-                        size="large"
-                        variant="contained"
-                    >
-                        <MdDownloadDone />
-                    </Button>
-                </Box>
-            </Modal>
+
             {/*model Experience*/}
 
             {/*model Education*/}
