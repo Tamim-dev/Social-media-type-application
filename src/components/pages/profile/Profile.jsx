@@ -74,7 +74,8 @@ const Profile = () => {
     const [image, setImage] = useState(userData.photoURL);
     const [imagecover, setImagecover] = useState(userData.cover_picture);
     const cropperRef = createRef();
-    const storageRef = imgref(storage, "some-child");
+    const storageRef = imgref(storage, `${Math.random()}`);
+    const storageRefcover = imgref(storage, `${Math.random()}`);
 
     useEffect(() => {
         onValue(ref(db, "users/"), (snapshot) => {
@@ -188,7 +189,7 @@ const Profile = () => {
             const message4 = cropperRef.current?.cropper
                 .getCroppedCanvas()
                 .toDataURL();
-            uploadString(storageRef, message4, "data_url").then((snapshot) => {
+            uploadString(storageRefcover, message4, "data_url").then((snapshot) => {
                 getDownloadURL(snapshot.ref).then((downloadURL) => {
                     set(ref(db, "users/" + userData.uid), {
                         ...currentuser,

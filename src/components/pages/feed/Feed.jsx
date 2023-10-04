@@ -32,6 +32,8 @@ const Feed = () => {
     let [values, setValues] = useState("");
     let [imageurl, setImageUrl] = useState("");
     let [post, setPost] = useState([]);
+    let [friend, setFriend] = useState([]);
+    let [about, setAbout] = useState("");
 
     useEffect(() => {
         onValue(ref(db, "post/"), (snapshot) => {
@@ -41,6 +43,21 @@ const Feed = () => {
             });
             setPost(arr);
         });
+        onValue(ref(db, "users/" + userData.uid), (snapshot) => {
+            setAbout(snapshot.val());
+        });
+        onValue(ref(db, "friend/"), (snapshot) => {
+            let arr = [];
+            snapshot.forEach((item) => {
+                if (userData.uid == item.val().reqsenderid) {
+                    arr.push(item.val().reqreceiverid);
+                } else if (userData.uid == item.val().reqreceiverid) {
+                    arr.push(item.val().reqsenderid);
+                }
+            });
+            setFriend(arr);
+        });
+        console.log(about);
     }, []);
 
     let handelchange = (e) => {
@@ -53,9 +70,10 @@ const Feed = () => {
             postimg: imageurl,
             postcreatorname: userData.displayName,
             postcreatorid: userData.uid,
+            postcreatorprofile: userData.photoURL,
         });
         setValues("");
-        setImageUrl("")
+        setImageUrl("");
     };
 
     let handelfile = (e) => {
@@ -102,47 +120,112 @@ const Feed = () => {
                             </div>
                         </div>
 
-                        <div style={{display:"flex",flexDirection:"column-reverse"}}>
-                        {post.map((item) => (
-                            item.postcreatorid != userData.uid &&
-                            <div
-                                style={{ marginTop: "35px" }}
-                                className="feed_box"
-                            >
-                                <div className="feed_icon_dot">
-                                    <BsThreeDots />
-                                </div>
-                                <div className="feed_icon_dot_box"></div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        columnGap: "15px",
-                                        alignItems: "center",
-                                    }}
-                                >
-                                    <Image
-                                        className="feed_profile_img"
-                                        imgsrc={profile}
-                                    />
-                                    <div>
-                                        <h3>{item.postcreatorname}</h3>
-                                        <p>
-                                            Product designer at Commandor Corp.
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column-reverse",
+                            }}
+                        >
+                            {post.map((item) =>
+                                userData.uid == item.postcreatorid ? (
+                                    <div
+                                        style={{ marginTop: "35px" }}
+                                        className="feed_box"
+                                    >
+                                        <div className="feed_icon_dot">
+                                            <BsThreeDots />
+                                        </div>
+                                        <div className="feed_icon_dot_box"></div>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                columnGap: "15px",
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            <Image
+                                                className="feed_profile_img"
+                                                imgsrc={item.postcreatorprofile}
+                                            />
+                                            <div>
+                                                <h3>{item.postcreatorname}</h3>
+                                                <p>
+                                                    Product designer at
+                                                    Commandor Corp.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <p style={{ marginTop: "15px" }}>
+                                            {item.posttext}
                                         </p>
+                                        {item.postimg && (
+                                            <ModalImage
+                                                small={item.postimg}
+                                                large={item.postimg}
+                                                className="feed_postimg"
+                                            />
+                                        )}
                                     </div>
-                                </div>
-                                <p style={{ marginTop: "15px" }}>
-                                    {item.posttext}
-                                </p>
-                                {item.postimg && (
-                                    <ModalImage
-                                        small={item.postimg}
-                                        large={item.postimg}
-                                        className="feed_postimg"
-                                    />
-                                )}
-                            </div>
-                        ))}
+                                ) : (
+                                    friend.map(
+                                        (friendid) =>
+                                            friendid == item.postcreatorid && (
+                                                <div
+                                                    style={{
+                                                        marginTop: "35px",
+                                                    }}
+                                                    className="feed_box"
+                                                >
+                                                    <div className="feed_icon_dot">
+                                                        <BsThreeDots />
+                                                    </div>
+                                                    <div className="feed_icon_dot_box"></div>
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            columnGap: "15px",
+                                                            alignItems:
+                                                                "center",
+                                                        }}
+                                                    >
+                                                        <Image
+                                                            className="feed_profile_img"
+                                                            imgsrc={
+                                                                item.postcreatorprofile
+                                                            }
+                                                        />
+                                                        <div>
+                                                            <h3>
+                                                                {
+                                                                    item.postcreatorname
+                                                                }
+                                                            </h3>
+                                                            <p>
+                                                                Product designer
+                                                                at Commandor
+                                                                Corp.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <p
+                                                        style={{
+                                                            marginTop: "15px",
+                                                        }}
+                                                    >
+                                                        {item.posttext}
+                                                    </p>
+                                                    {item.postimg && (
+                                                        <ModalImage
+                                                            small={item.postimg}
+                                                            large={item.postimg}
+                                                            className="feed_postimg"
+                                                        />
+                                                    )}
+                                                </div>
+                                            )
+                                    )
+                                )
+                            )}
                         </div>
                     </Grid>
                     <Grid xs={3}>
@@ -169,7 +252,7 @@ const Feed = () => {
                                         marginBottom: "10px",
                                     }}
                                 >
-                                    Dmitry Kargaev
+                                    {userData.displayName}
                                 </h3>
                                 <p
                                     style={{
@@ -179,9 +262,7 @@ const Feed = () => {
                                         paddingBottom: "25px",
                                     }}
                                 >
-                                    Freelance UX/UI designer, 80+ projects in
-                                    web design, mobile apps (iOS & android) and
-                                    creative projects. Open to offers.
+                                    {about.info}
                                 </p>
                             </div>
                         </Link>
