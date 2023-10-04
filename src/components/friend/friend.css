@@ -3,11 +3,12 @@
     /* background: #5daefe; */
     padding: 30px 0 0 00px;
     position: relative;
+    height: 500px;
 }
 
 .friend_box{
     background: #fff;
-    padding: 30px;
+    padding: 30px 30px 90px;
     width: 100%;
     display: flex;
     align-items: center;
