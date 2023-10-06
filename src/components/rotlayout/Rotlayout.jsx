@@ -1,23 +1,32 @@
-import React,{useEffect} from "react";
+import React,{useEffect, useState} from "react";
 import "./rotlayout.css";
 import { Link, Outlet } from "react-router-dom";
 import { BsLinkedin } from "react-icons/bs";
 import Container from "../Container";
 import Image from "../Image";
-import profile from "../../assets/profile.jpeg";
 import { TbLogout2 } from "react-icons/tb";
 import { getAuth, signOut } from "firebase/auth";
 import { userdata } from "../features/users/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import {
+    getDatabase,
+    ref,
+    onValue,
+} from "firebase/database";
 
 const Rotlayout = () => {
     const auth = getAuth();
+    const db = getDatabase();
     const dispatch = useDispatch();
     let navigate = useNavigate();
     let userData = useSelector((state)=>state.loginuser.loginuser)
+    let [user,setUser] = useState("")
 
     useEffect(() => {
+        onValue(ref(db, "users/" + userData.uid), (snapshot) => {
+            setUser(snapshot.val());
+        });
         if(userData == null){
             navigate("/login")
         }
@@ -45,7 +54,7 @@ const Rotlayout = () => {
                             <div className="rotlayout_profile_box">
                                 <Image
                                     className="rotlayout_profile_img"
-                                    imgsrc={userData.photoURL}
+                                    imgsrc={user.photoURL}
                                 />
                                 <h2
                                     style={{
@@ -53,7 +62,7 @@ const Rotlayout = () => {
                                         fontWeight: "600",
                                     }}
                                 >
-                                    {userData.displayName}
+                                    {user.username}
                                 </h2>
                             </div>
                             </Link>

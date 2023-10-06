@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./feed.css";
 import { BsImage, BsThreeDots } from "react-icons/bs";
 import { RiSendPlaneFill } from "react-icons/ri";
+import { MdDelete } from "react-icons/md";
 import Container from "../../Container";
 import Grid from "@mui/material/Grid";
 import Image from "../../Image";
@@ -34,6 +35,7 @@ const Feed = () => {
     let [post, setPost] = useState([]);
     let [friend, setFriend] = useState([]);
     let [about, setAbout] = useState("");
+    let [postdelete, setPostdelete] = useState(false);
 
     useEffect(() => {
         onValue(ref(db, "post/"), (snapshot) => {
@@ -57,7 +59,6 @@ const Feed = () => {
             });
             setFriend(arr);
         });
-        console.log(about);
     }, []);
 
     let handelchange = (e) => {
@@ -65,13 +66,18 @@ const Feed = () => {
     };
 
     let handelsunmit = () => {
-        set(push(ref(db, "post/")), {
-            posttext: values,
-            postimg: imageurl,
-            postcreatorname: userData.displayName,
-            postcreatorid: userData.uid,
-            postcreatorprofile: userData.photoURL,
-        });
+        if (values != "" || imageurl != "") {
+            set(push(ref(db, "post/")), {
+                posttext: values,
+                postimg: imageurl,
+                postcreatorname: about.username,
+                postcreatorid: userData.uid,
+                postcreatorprofile: about.photoURL,
+            }).then(() => {
+                setValues("");
+                setImageUrl("");
+            });
+        }
         setValues("");
         setImageUrl("");
     };
@@ -87,6 +93,16 @@ const Feed = () => {
                 });
             }
         );
+    };
+
+    let handelpostdeletepopup = (item) => {
+        setPostdelete(!postdelete);
+    };
+
+    let handelpostdelete = (item) => {
+        remove(ref(db, "post/" + item.id)).then(() => {
+            setPostdelete(false);
+        });
     };
 
     return (
@@ -133,7 +149,27 @@ const Feed = () => {
                                         className="feed_box"
                                     >
                                         <div className="feed_icon_dot">
-                                            <BsThreeDots />
+                                            <BsThreeDots
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() =>
+                                                    handelpostdeletepopup(item)
+                                                }
+                                            />
+                                            {postdelete && (
+                                                <div className="postdeleteedit">
+                                                    <p
+                                                        className="postdeleteediticon"
+                                                        onClick={() =>
+                                                            handelpostdelete(
+                                                                item
+                                                            )
+                                                        }
+                                                    >
+                                                        <MdDelete />
+                                                        delete
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="feed_icon_dot_box"></div>
                                         <div
@@ -149,10 +185,6 @@ const Feed = () => {
                                             />
                                             <div>
                                                 <h3>{item.postcreatorname}</h3>
-                                                <p>
-                                                    Product designer at
-                                                    Commandor Corp.
-                                                </p>
                                             </div>
                                         </div>
                                         <p style={{ marginTop: "15px" }}>
@@ -200,11 +232,6 @@ const Feed = () => {
                                                                     item.postcreatorname
                                                                 }
                                                             </h3>
-                                                            <p>
-                                                                Product designer
-                                                                at Commandor
-                                                                Corp.
-                                                            </p>
                                                         </div>
                                                     </div>
                                                     <p
@@ -243,7 +270,7 @@ const Feed = () => {
                                 />
                                 <Image
                                     className="feed_profile_profile"
-                                    imgsrc={userData.photoURL}
+                                    imgsrc={about.photoURL}
                                 />
                                 <h3
                                     style={{
@@ -252,7 +279,7 @@ const Feed = () => {
                                         marginBottom: "10px",
                                     }}
                                 >
-                                    {userData.displayName}
+                                    {about.username}
                                 </h3>
                                 <p
                                     style={{
