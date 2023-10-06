@@ -35,7 +35,7 @@ const Feed = () => {
     let [post, setPost] = useState([]);
     let [friend, setFriend] = useState([]);
     let [about, setAbout] = useState("");
-    let [postdelete, setPostdelete] = useState(false);
+    let [postdelete, setPostdelete] = useState("");
 
     useEffect(() => {
         onValue(ref(db, "post/"), (snapshot) => {
@@ -96,12 +96,12 @@ const Feed = () => {
     };
 
     let handelpostdeletepopup = (item) => {
-        setPostdelete(!postdelete);
+        setPostdelete(item.id);
     };
 
     let handelpostdelete = (item) => {
         remove(ref(db, "post/" + item.id)).then(() => {
-            setPostdelete(false);
+            setPostdelete("");
         });
     };
 
@@ -155,7 +155,7 @@ const Feed = () => {
                                                     handelpostdeletepopup(item)
                                                 }
                                             />
-                                            {postdelete && (
+                                            {postdelete == item.id && (
                                                 <div className="postdeleteedit">
                                                     <p
                                                         className="postdeleteediticon"
