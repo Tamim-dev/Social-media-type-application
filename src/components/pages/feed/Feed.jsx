@@ -134,6 +134,16 @@ const Feed = () => {
                                     />
                                 </div>
                             </div>
+                            {imageurl != "" && (
+                                <div className="priviewimgbox">
+                                    <ModalImage
+                                        small={imageurl}
+                                        large={imageurl}
+                                        className="priviewimg"
+                                    />
+                                    <MdDelete onClick={()=>setImageUrl("")} style={{fontSize:"26px",cursor:"pointer"}}/>
+                                </div>
+                            )}
                         </div>
 
                         <div

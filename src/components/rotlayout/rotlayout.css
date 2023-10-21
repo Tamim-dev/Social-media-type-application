@@ -12,3 +12,8 @@
     display: flex;
     align-items: center;
 }
+
+#composition-menu{
+    border: 1px solid rgba(0, 0, 0, 0.433);
+    border-radius: 5px;
+}

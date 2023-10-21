@@ -58,7 +58,7 @@ const User = () => {
         });
         set(push(ref(db, "friendrequest/")), {
             reqsenderid: userData.uid,
-            reqsendername: userData.displayName,
+            reqsendername: pic.username,
             reqsenderpic: pic.photoURL,
             reqreceiverid: item.id,
             reqreceivername: item.username,
