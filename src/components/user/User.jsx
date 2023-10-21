@@ -52,11 +52,17 @@ const User = () => {
     }, []);
 
     let handelfriendreq = (item) => {
+        let pic = "";
+        onValue(ref(db, "users/" + userData.uid), (snapshot) => {
+            pic = snapshot.val();
+        });
         set(push(ref(db, "friendrequest/")), {
             reqsenderid: userData.uid,
             reqsendername: userData.displayName,
+            reqsenderpic: pic.photoURL,
             reqreceiverid: item.id,
             reqreceivername: item.username,
+            reqreceiverpic: item.photoURL,
         });
     };
 
@@ -117,11 +123,7 @@ const User = () => {
                                     </Button>
                                 ) : friend.includes(userData.uid + item.id) ||
                                   friend.includes(item.id + userData.uid) ? (
-                                    <Button
-                                        onClick={() => handelfriendreq(item)}
-                                        variant="contained"
-                                        color="success"
-                                    >
+                                    <Button variant="contained" color="success">
                                         <FaUserFriends
                                             style={{ fontSize: "20px" }}
                                         />

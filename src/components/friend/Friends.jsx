@@ -76,7 +76,7 @@ const Friends = () => {
                                 }}
                             >
                                 <h2 style={{ marginBottom: "15px" }}>
-                                    FRIENRS
+                                    FRIENDS
                                 </h2>
                                 <div className="feed_icon_dot_box"></div>
                                 {friend.map((item) => (
@@ -88,10 +88,18 @@ const Friends = () => {
                                         }}
                                     >
                                         <div className="sidebar_profile_box">
+                                        {item.reqsenderid ==
+                                            userData.uid ?
                                             <Image
                                                 className="sidebar_profile_img"
-                                                imgsrc={profile}
+                                                imgsrc={item.reqreceiverpic}
                                             />
+                                            :
+                                            <Image
+                                                className="sidebar_profile_img"
+                                                imgsrc={item.reqsenderpic}
+                                            />
+                                        }
                                             <div>
                                                 {item.reqsenderid ==
                                                 userData.uid ? (
@@ -124,7 +132,7 @@ const Friends = () => {
                         <Grid xs={6}>
                             <div style={{ marginLeft: "30px" }}>
                                 <h2 style={{ marginBottom: "15px" }}>
-                                    FRIENRS REQUEST
+                                    FRIENDS REQUEST
                                 </h2>
                                 <div className="feed_icon_dot_box"></div>
                                 {friendrequest.map(
@@ -142,7 +150,7 @@ const Friends = () => {
                                                     <Image
                                                         className="sidebar_profile_img"
                                                         imgsrc={
-                                                            userData.photoURL
+                                                            item.reqsenderpic
                                                         }
                                                     />
                                                     <div>

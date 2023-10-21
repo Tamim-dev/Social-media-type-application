@@ -616,7 +616,7 @@ const Profile = () => {
                                                     : "profile_button"
                                             }
                                         >
-                                            FRIENRS
+                                            FRIENDS
                                         </button>
                                     </Link>
                                     <Link to={"/social/profile/post"}>
