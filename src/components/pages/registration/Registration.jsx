@@ -16,12 +16,14 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { VscEyeClosed } from "react-icons/vsc";
 import { TiEye } from "react-icons/ti";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 let initialvalue = {
     email: "",
     fullname: "",
     password: "",
     error: "",
+    loading: false,
 };
 
 const Registration = () => {
@@ -72,6 +74,10 @@ const Registration = () => {
             });
             return;
         }
+        setValues({
+            ...values,
+            loading:true
+        });
         createUserWithEmailAndPassword(auth, email, password)
             .then((user) => {
                 updateProfile(auth.currentUser, {
@@ -99,6 +105,7 @@ const Registration = () => {
                         email: "",
                         fullname: "",
                         password: "",
+                        loading:false
                     });
                 }
                 if (errorCode.includes("auth/email-already-in-use")) {
@@ -108,6 +115,7 @@ const Registration = () => {
                         email: "",
                         fullname: "",
                         password: "",
+                        loading:false
                     });
                 }
             });
@@ -191,13 +199,19 @@ const Registration = () => {
                             </Alert>
                         )}
                     </div>
-                    <Button
-                        className="registrationButton"
-                        variant="contained"
-                        onClick={handelregistration}
-                    >
+                    {values.loading ? (
+                        <LoadingButton className="registrationButton" loading variant="outlined">
                         Registration
-                    </Button>
+                        </LoadingButton>
+                    ) : (
+                        <Button
+                            className="registrationButton"
+                            variant="contained"
+                            onClick={handelregistration}
+                        >
+                            Registration
+                        </Button>
+                    )}
                 </div>
                 <Alert severity="info">
                     Already have an account ?{" "}

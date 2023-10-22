@@ -90,7 +90,7 @@ const Rotlayout = () => {
                         <Link to={"/social/feed"}>
                             <BsLinkedin className="rotlayout_icon" />
                         </Link>
-                        <div style={{ position: "relative" }}>
+                        <div style={{ position: "relative",cursor:"pointer" }}>
                             <div
                                 aria-controls={
                                     open ? "composition-menu" : undefined

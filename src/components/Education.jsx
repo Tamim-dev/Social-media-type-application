@@ -67,7 +67,6 @@ const Education = () => {
             ...eduvalues,
             [e.target.name]: e.target.value,
         });
-        console.log(eduvaluee);
     };
 
     let handleEducation = () => {

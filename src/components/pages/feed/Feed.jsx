@@ -25,6 +25,7 @@ import {
     uploadBytesResumable,
     getDownloadURL,
 } from "firebase/storage";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const Feed = () => {
     const db = getDatabase();
@@ -36,6 +37,7 @@ const Feed = () => {
     let [friend, setFriend] = useState([]);
     let [about, setAbout] = useState("");
     let [postdelete, setPostdelete] = useState("");
+    let [loading, setLoading] = useState(false);
 
     useEffect(() => {
         onValue(ref(db, "post/"), (snapshot) => {
@@ -83,14 +85,20 @@ const Feed = () => {
     };
 
     let handelfile = (e) => {
+        setLoading(true);
         const storageRef = imgref(storage, `${e.target.files[0].name}`);
         const uploadTask = uploadBytesResumable(storageRef, e.target.files[0]);
         uploadTask.on(
-            (error) => {},
+            (error) => {
+            },
             () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    setImageUrl(downloadURL);
-                });
+                getDownloadURL(uploadTask.snapshot.ref)
+                    .then((downloadURL) => {
+                        setImageUrl(downloadURL);
+                    })
+                    .then(() => {
+                        setLoading(false);
+                    });
             }
         );
     };
@@ -115,7 +123,7 @@ const Feed = () => {
                             <div className="feed_input_box">
                                 <textarea
                                     value={values}
-                                    placeholder="What’s on your mind?"
+                                    placeholder="What's on your mind?"
                                     onChange={handelchange}
                                     className="textarea"
                                 />
@@ -134,15 +142,28 @@ const Feed = () => {
                                     />
                                 </div>
                             </div>
-                            {imageurl != "" && (
-                                <div className="priviewimgbox">
-                                    <ModalImage
-                                        small={imageurl}
-                                        large={imageurl}
-                                        className="priviewimg"
-                                    />
-                                    <MdDelete onClick={()=>setImageUrl("")} style={{fontSize:"26px",cursor:"pointer"}}/>
-                                </div>
+                            {loading ? (
+                                <LoadingButton
+                                    className="priviewimgloading"
+                                    loading
+                                ></LoadingButton>
+                            ) : (
+                                imageurl != "" && (
+                                    <div className="priviewimgbox">
+                                        <ModalImage
+                                            small={imageurl}
+                                            large={imageurl}
+                                            className="priviewimg"
+                                        />
+                                        <MdDelete
+                                            onClick={() => setImageUrl("")}
+                                            style={{
+                                                fontSize: "26px",
+                                                cursor: "pointer",
+                                            }}
+                                        />
+                                    </div>
+                                )
                             )}
                         </div>
 

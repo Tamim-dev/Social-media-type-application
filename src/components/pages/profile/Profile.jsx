@@ -22,6 +22,7 @@ import TextField from "@mui/material/TextField";
 import { MuiTelInput } from "mui-tel-input";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
+import LoadingButton from "@mui/lab/LoadingButton";
 import {
     getStorage,
     ref as imgref,
@@ -70,9 +71,12 @@ const Profile = () => {
     const handleClosecropper = () => setOpencropper(false);
     const handleOpencroppercover = () => setOpencroppercover(true);
     const handleClosecroppercover = () => setOpencroppercover(false);
+    let [loading, setLoading] = useState(false);
 
     const [image, setImage] = useState(userData.photoURL);
-    const [imagecover, setImagecover] = useState(userData.cover_picture);
+    const [imagecover, setImagecover] = useState(
+        "https://i.ibb.co/G93NXJ1/Rectangle-3.png"
+    );
     const cropperRef = createRef();
     const storageRef = imgref(storage, `${Math.random()}`);
     const storageRefcover = imgref(storage, `${Math.random()}`);
@@ -138,6 +142,7 @@ const Profile = () => {
     };
 
     const handleCropData = () => {
+        setLoading(true);
         if (typeof cropperRef.current?.cropper !== "undefined") {
             const message4 = cropperRef.current?.cropper
                 .getCroppedCanvas()
@@ -161,6 +166,7 @@ const Profile = () => {
                             );
                         })
                         .then(() => {
+                            setLoading(false);
                             setOpencropper(false);
                             setImage("");
                         });
@@ -185,37 +191,41 @@ const Profile = () => {
     };
 
     const handleCropDatacover = () => {
+        setLoading(true);
         if (typeof cropperRef.current?.cropper !== "undefined") {
             const message4 = cropperRef.current?.cropper
                 .getCroppedCanvas()
                 .toDataURL();
-            uploadString(storageRefcover, message4, "data_url").then((snapshot) => {
-                getDownloadURL(snapshot.ref).then((downloadURL) => {
-                    set(ref(db, "users/" + userData.uid), {
-                        ...currentuser,
-                        cover_picture: downloadURL,
-                    })
-                        .then(() => {
-                            localStorage.setItem(
-                                "user",
-                                JSON.stringify({
-                                    ...userData,
-                                    cover_picture: downloadURL,
-                                })
-                            );
-                            dispatch(
-                                userdata({
-                                    ...userData,
-                                    cover_picture: downloadURL,
-                                })
-                            );
+            uploadString(storageRefcover, message4, "data_url").then(
+                (snapshot) => {
+                    getDownloadURL(snapshot.ref).then((downloadURL) => {
+                        set(ref(db, "users/" + userData.uid), {
+                            ...currentuser,
+                            cover_picture: downloadURL,
                         })
-                        .then(() => {
-                            setOpencroppercover(false);
-                            setImagecover("");
-                        });
-                });
-            });
+                            .then(() => {
+                                localStorage.setItem(
+                                    "user",
+                                    JSON.stringify({
+                                        ...userData,
+                                        cover_picture: downloadURL,
+                                    })
+                                );
+                                dispatch(
+                                    userdata({
+                                        ...userData,
+                                        cover_picture: downloadURL,
+                                    })
+                                );
+                            })
+                            .then(() => {
+                                setLoading(false);
+                                setOpencroppercover(false);
+                                setImagecover("");
+                            });
+                    });
+                }
+            );
         }
     };
 
@@ -535,9 +545,15 @@ const Profile = () => {
                                             checkOrientation={false}
                                             guides={true}
                                         />
-                                        <Button onClick={handleCropData}>
-                                            Upload
-                                        </Button>
+                                        {loading ? (
+                                            <LoadingButton loading size="large">
+                                                Upload
+                                            </LoadingButton>
+                                        ) : (
+                                            <Button onClick={handleCropData}>
+                                                Upload
+                                            </Button>
+                                        )}
                                     </Typography>
                                 </Box>
                             </Modal>
@@ -553,7 +569,7 @@ const Profile = () => {
                                         variant="h6"
                                         component="h2"
                                     >
-                                        Update Profile Picture
+                                        Update cover Picture
                                     </Typography>
                                     <Typography
                                         id="modal-modal-description"
@@ -585,9 +601,17 @@ const Profile = () => {
                                             checkOrientation={false}
                                             guides={true}
                                         />
-                                        <Button onClick={handleCropDatacover}>
-                                            Upload
-                                        </Button>
+                                        {loading ? (
+                                            <LoadingButton
+                                                loading
+                                            >Upload</LoadingButton>
+                                        ) : (
+                                            <Button
+                                                onClick={handleCropDatacover}
+                                            >
+                                                Upload
+                                            </Button>
+                                        )}
                                     </Typography>
                                 </Box>
                             </Modal>

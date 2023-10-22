@@ -11,11 +11,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { VscEyeClosed } from "react-icons/vsc";
 import { TiEye } from "react-icons/ti";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 let initialvalue = {
     email: "",
     password: "",
     error: "",
+    loading: false,
 };
 
 const Login = () => {
@@ -58,6 +60,10 @@ const Login = () => {
             });
             return;
         }
+        setValues({
+            ...values,
+            loading: true,
+        });
         signInWithEmailAndPassword(auth, email, password)
             .then((user) => {
                 dispatch(userdata(user.user));
@@ -67,7 +73,6 @@ const Login = () => {
             })
             .catch((error) => {
                 const errorCode = error.code;
-                console.log(errorCode);
                 if (errorCode.includes("auth/invalid-email")) {
                     notify("Invalid your email");
                     setValues({
@@ -75,6 +80,7 @@ const Login = () => {
                         email: "",
                         fullname: "",
                         password: "",
+                        loading: false,
                     });
                 }
                 if (errorCode.includes("auth/invalid-login-credentials")) {
@@ -84,6 +90,7 @@ const Login = () => {
                         email: "",
                         fullname: "",
                         password: "",
+                        loading: false,
                     });
                 }
             });
@@ -150,13 +157,23 @@ const Login = () => {
                     {values.error.includes("enteryourpassword") && (
                         <Alert severity="error">Please enter your Email</Alert>
                     )}
-                    <Button
-                        className="registrationButton"
-                        variant="contained"
-                        onClick={handellogin}
-                    >
-                        Login
-                    </Button>
+                    {values.loading ? (
+                        <LoadingButton
+                            className="registrationButton"
+                            loading
+                            variant="outlined"
+                        >
+                            Login
+                        </LoadingButton>
+                    ) : (
+                        <Button
+                            className="registrationButton"
+                            variant="contained"
+                            onClick={handellogin}
+                        >
+                            Login
+                        </Button>
+                    )}
                 </div>
                 <Alert severity="info">
                     Don't have an account ?{" "}
